@@ -1,0 +1,21 @@
+using System;
+
+namespace tenVeriables
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            float health = 100f;
+            int armor = 100;
+            string nameHero = "Anton";
+            bool deathOfHero = false;
+            decimal moneyInWallet = 100;
+            char  heroMark = '@';
+            byte nuclearGandhi = 1;
+            ulong moneyInThebank = ulong.MaxValue;
+            string heroCountriName = "SpbLand";
+            double pi = 3.1415926535;
+        }
+    }
+}
