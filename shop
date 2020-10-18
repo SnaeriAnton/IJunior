@@ -1,0 +1,29 @@
+using System;
+
+namespace shop
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int moneyFromHero;
+            int crystalsPrice = 100;
+            int howManyCrystalsToBuy;
+            bool test;
+
+            Console.Write("Сколько денег в вашем кошельке: ");
+            moneyFromHero = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine($"Стоимсоть одного кристала: {crystalsPrice}");
+            Console.Write("Сколько кристалов вы хотите купить: ");
+            howManyCrystalsToBuy = Convert.ToInt32(Console.ReadLine());
+
+            test = moneyFromHero >= crystalsPrice * howManyCrystalsToBuy;
+
+            howManyCrystalsToBuy *= Convert.ToInt32(test);
+
+            moneyFromHero -= crystalsPrice * howManyCrystalsToBuy;
+
+            Console.WriteLine($"Вы приобрели {howManyCrystalsToBuy} крисалов.\nУ вас осталость {moneyFromHero} денег.");
+        }
+    }
+}
