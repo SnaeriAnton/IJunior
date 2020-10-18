@@ -1,0 +1,26 @@
+using System;
+
+namespace interview
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string name;
+            string zodiacSign;
+            int age;
+            string work;
+
+            Console.Write("Как вас зовут: ");
+            name = Console.ReadLine();
+            Console.Write("Ваш знак зодиака: ");
+            zodiacSign = Console.ReadLine();
+            Console.Write("Сколько вам полных лет: ");
+            age = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Кем вы работаете: ");
+            work = Console.ReadLine();
+
+            Console.WriteLine($"Вас зовут {name}, вам {age}, вы {zodiacSign} и работаете {work}");
+        }
+    }
+}
