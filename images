@@ -1,0 +1,17 @@
+using System;
+
+namespace images
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int numberOfPictures = 52;
+            int maxInOneRow = 3;
+            int wholeRows = numberOfPictures / maxInOneRow;
+            int beyondMeasure = numberOfPictures % maxInOneRow;
+
+            Console.WriteLine($"{wholeRows} - полностью заполненных рядов.\n{beyondMeasure} - картинок сверх меры.");
+        }
+    }
+}
