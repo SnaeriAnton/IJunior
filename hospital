@@ -1,0 +1,24 @@
+using System;
+
+namespace hospital
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int queueLength;
+            int timeOfreceipt = 10;
+            int hours;
+            int minutes;
+            
+            Console.Write($"Сколько человек в очереди: ");
+            queueLength = Convert.ToInt32(Console.ReadLine());
+
+            queueLength *= timeOfreceipt ;
+            hours = queueLength / 60;
+            minutes = queueLength % 60;
+
+            Console.WriteLine($"Ваша очередь через {hours} часа и {minutes} минут.");
+        }
+    }
+}
