@@ -1,0 +1,22 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace exit
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string exit = "";
+            while (exit != "exit")
+            {
+                Console.WriteLine("Что бы выйти из цикла введите exit");
+                exit = Console.ReadLine();
+
+            }
+        }
+    }
+}
