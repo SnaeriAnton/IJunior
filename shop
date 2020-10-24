@@ -6,24 +6,24 @@ namespace shop
     {
         static void Main(string[] args)
         {
-            int moneyFromHero;
+            int moneyHero;
             int crystalsPrice = 100;
             int howManyCrystalsToBuy;
-            bool test;
+            bool chekingAmountOfMoney;
 
             Console.Write("Сколько денег в вашем кошельке: ");
-            moneyFromHero = Convert.ToInt32(Console.ReadLine());
+            moneyHero = Convert.ToInt32(Console.ReadLine());
             Console.WriteLine($"Стоимсоть одного кристала: {crystalsPrice}");
             Console.Write("Сколько кристалов вы хотите купить: ");
             howManyCrystalsToBuy = Convert.ToInt32(Console.ReadLine());
 
-            test = moneyFromHero >= crystalsPrice * howManyCrystalsToBuy;
+            chekingAmountOfMoney = moneyHero >= crystalsPrice * howManyCrystalsToBuy;
 
-            howManyCrystalsToBuy *= Convert.ToInt32(test);
+            howManyCrystalsToBuy *= Convert.ToInt32(chekingAmountOfMoney);
 
-            moneyFromHero -= crystalsPrice * howManyCrystalsToBuy;
+            moneyHero -= crystalsPrice * howManyCrystalsToBuy;
 
-            Console.WriteLine($"Вы приобрели {howManyCrystalsToBuy} крисалов.\nУ вас осталость {moneyFromHero} денег.");
+            Console.WriteLine($"Вы приобрели {howManyCrystalsToBuy} крисалов.\nУ вас осталость {moneyHero} денег.");
         }
     }
 }
