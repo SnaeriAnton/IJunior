@@ -1,0 +1,112 @@
+using System;
+
+namespace curencyConverter
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int curencyUsdRub = 76;
+            int curencyEurRub = 90;
+            float curencyEurUsd = 1.19f;
+            bool checingMoneyBalance = true;
+            int userInputChoiceMenu = 0;
+            string userInputExit = " ";
+            float howMuchMoney = 0;
+
+
+            Console.Write("Сколько у вас рублей: ");
+            float balanceRub = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Сколько у вас долларов: ");
+            float balanceUsd = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Сколько у вас евро: ");
+            float balanceEur = Convert.ToInt32(Console.ReadLine());
+
+
+            while (userInputExit != "exit")
+            {
+                Console.WriteLine("\nВыберите интересующую вас операцию.\n" +
+                    "\n1. Конвертировать доллары в рубли." +
+                    "\n2. Конвертировать евро в рубли." +
+                    "\n3. Конвертировать рубли в доллары." +
+                    "\n4. Конвертировать рубли в евро." +
+                    "\n5. Конвертировать евро в доллары." +
+                    "\n6. Конвертировать доллары в евро" +
+                    "\n7. Выйти из банка.");
+
+                Console.Write("\nВведите номер операции: ");
+                userInputChoiceMenu = Convert.ToInt32(Console.ReadLine());
+                while (!(userInputChoiceMenu < 8) || !(userInputChoiceMenu > 0))
+                {
+                    Console.Write("Нет такого номера операции.\nВведите номер операции: ");
+                    userInputChoiceMenu = Convert.ToInt32(Console.ReadLine());
+                    
+                }
+
+                if (userInputChoiceMenu < 7)
+                {
+                    Console.WriteLine($"\nВаш баланс:\nRub: {balanceRub}\nUsd: {balanceUsd}\nEur: {balanceEur}");
+                    
+                    Console.Write("\nКакую сумму вы хотите сконвертировать: ");
+                    howMuchMoney = Convert.ToInt32(Console.ReadLine());
+                }
+
+                switch (userInputChoiceMenu)
+                {
+                    case 1: // Usd in Rub
+                        checingMoneyBalance = howMuchMoney <= balanceUsd;
+                        howMuchMoney *= Convert.ToInt32(checingMoneyBalance);
+                        balanceRub += howMuchMoney * curencyUsdRub;
+                        balanceUsd -= howMuchMoney;
+                        break;
+                    case 2: //Eur in Rub
+                        checingMoneyBalance = howMuchMoney <= balanceEur;
+                        howMuchMoney *= Convert.ToInt32(checingMoneyBalance);
+                        balanceRub += howMuchMoney * curencyEurRub;
+                        balanceEur -= howMuchMoney;
+                        break;
+                    case 3: //Rub in Eur
+                        checingMoneyBalance = howMuchMoney <= balanceRub;
+                        howMuchMoney *= Convert.ToInt32(checingMoneyBalance);
+                        balanceEur += howMuchMoney / curencyEurRub;
+                        balanceRub -= howMuchMoney;
+                        break;
+                    case 4: //Rub in Usd
+                        checingMoneyBalance = howMuchMoney <= balanceRub;
+                        howMuchMoney *= Convert.ToInt32(checingMoneyBalance);
+                        balanceUsd += howMuchMoney / curencyUsdRub;
+                        balanceRub -= howMuchMoney;
+                        break;
+                    case 5: //Eur in Usd
+                        checingMoneyBalance = howMuchMoney <= balanceEur;
+                        howMuchMoney *= Convert.ToInt32(checingMoneyBalance);
+                        balanceUsd += howMuchMoney * curencyEurUsd;
+                        balanceEur -= howMuchMoney;
+                        break;
+                    case 6: //Usd in Eur
+                        checingMoneyBalance = howMuchMoney <= balanceUsd;
+                        howMuchMoney *= Convert.ToInt32(checingMoneyBalance);
+                        balanceEur += howMuchMoney / curencyEurUsd;
+                        balanceUsd -= howMuchMoney;
+                        break;
+                    default:
+                        Console.WriteLine("\nВы решили покинуть банк.\nПриходите еще.");
+                        userInputExit = "exit";
+                        break;
+                }
+
+                if (checingMoneyBalance)
+                {
+                    Console.WriteLine($"\nВаш баланс:\nRub: {balanceRub}\nUsd: {balanceUsd}\nEur: {balanceEur}");
+                }
+                else
+                {
+                    Console.WriteLine("\nУ вас не достаточно средств для данной операции.");
+                    Console.WriteLine($"\nВаш баланс:\nRub: {balanceRub}\nUsd: {balanceUsd}\nEur: {balanceEur}");
+                }
+                Console.WriteLine("\nЕсли хотите продолжить нажмите Enter.\n\nЕсли хотите выйти из банка введите exit.");
+                userInputExit = Console.ReadLine();
+            }
+        }
+    }
+}
