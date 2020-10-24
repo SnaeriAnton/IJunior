@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace exit
 {
@@ -10,11 +6,11 @@ namespace exit
     {
         static void Main(string[] args)
         {
-            string exit = "";
-            while (exit != "exit")
+            string usierInput = " ";
+            while (usierInput != "exit")
             {
                 Console.WriteLine("Что бы выйти из цикла введите exit");
-                exit = Console.ReadLine();
+                usierInput = Console.ReadLine();
 
             }
         }
