@@ -1,0 +1,246 @@
+using System;
+
+namespace commands
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            
+
+
+            Console.Write("Введите ваше имя: ");
+            string userName = Console.ReadLine();
+            string userInput = " ";
+            int NumberOfMenu;
+            Random randomColor = new Random();
+            Random randomGame = new Random();
+            int shoiceIi;
+            string rockScissorsPaper = " ";
+            string gameInputUser;
+            int consoleColorValue;
+            int countWins = 0;
+            int answerTask = 0;
+            bool Cyberpunk2077 = false;
+            bool ancientEvil = false;
+            string usersTry;
+
+            Console.WriteLine("Если хотите вывести меню нажмите'Eтеук', если хотите уйти нажмите 'Esc'");
+
+            while (Console.ReadKey().Key != ConsoleKey.Escape)
+            {
+                Console.WriteLine("Выберите пункт меню\n" +
+                    "1. Создан для причинения боли\n" +
+                    "2. Выпустить на волю древнее зло.\n" +
+                    "3. Изменить цвето консоли.\n" +
+                    "4. Тут сокрыта тайна под ключем.\n" +
+                    "5. Давай поиграем в камень ножници бумага.\n" +
+                    "6. Хочешь узнать ключ?\n");
+                Console.Write("Выберите пункт меню: ");
+                NumberOfMenu = Convert.ToInt32(Console.ReadLine()); 
+                switch (NumberOfMenu)
+                {
+                    case 1:
+                        if (Cyberpunk2077 && ancientEvil)
+                        {
+                            Console.WriteLine("Тебе мало страданий?");
+                            Console.WriteLine("Cyberpunk 20077 отменили! Нехрен было выпускать древнее зло!");
+                        } else
+                        {
+                            Console.WriteLine("Cyberpunk 20077 перенесли на 10 декабря");
+                            Cyberpunk2077 = true;
+                        }
+                        
+                        break;
+                    case 2:
+                        Console.WriteLine("Вы вупустили на волю древнее зло!");
+                        ancientEvil = true;
+                        Console.WriteLine("Древнее зло зовут " + userName);
+                        break;
+                    case 3:
+                        Console.WriteLine("Выберите цвет:\n" +
+                            "1.Золотой\n" +
+                            "2.Малиновый\n" +
+                            "3.Мандариновый\n" +
+                            "4.Красный\n" +
+                            "5.Темно-темный\n" +
+                            "6.Бело-черный\n ");
+                        Console.Write("Введите номер цвет для консоли: ");
+                        
+                        consoleColorValue = Convert.ToInt32(Console.ReadLine());
+                        consoleColorValue = randomColor.Next(1, consoleColorValue);
+                        
+                        if (consoleColorValue == 1)
+                        {
+                            Console.BackgroundColor = ConsoleColor.Red;
+                        }
+                        else if (consoleColorValue == 2)
+                        {
+                            Console.BackgroundColor = ConsoleColor.Green;
+                        }
+                        else if (consoleColorValue == 3)
+                        {
+                            Console.BackgroundColor = ConsoleColor.Yellow;
+                        }
+                        else if (consoleColorValue == 4)
+                        {
+                            Console.BackgroundColor = ConsoleColor.Blue;
+                        }
+                        else if (consoleColorValue == 5)
+                        {
+                            Console.BackgroundColor = ConsoleColor.Black;
+                        }
+                        else if (consoleColorValue == 6)
+                        {
+                            Console.BackgroundColor = ConsoleColor.White;
+                        }
+                        Console.Clear();
+                        Console.WriteLine("Извините что то пошло не так. Приносим наши извинения за неудобства");
+                        break;
+                    case 4:
+                        Console.WriteLine("Введи ключь коли не боишься (все буквы маленькие): ");
+                        for (int i = 0; i < 3; i++)
+                        {
+                            usersTry = Console.ReadLine();
+                            if (usersTry == "раком дед ебет кобылу")
+                            {
+                                Console.WriteLine("Ключь принят!\nВыберите 7 пункт меню.");
+                                break;
+                            }
+                            else if (i == 2)
+                            {
+                                Console.WriteLine("Ты потерпел неудачу! Повезет в следующий раз. Возможно.");
+                                userInput = "Exit";
+                            } else
+                            {
+                                Console.WriteLine("Мерзкий звук ошибки ЭЭЭЭЭЭЭЭЭ.\nПопробуй еще:");
+                            }
+                        }
+                        break;
+                    case 5:
+                        Console.WriteLine("Что бы победить командную строку тебе нужно одержать 3 победы!");
+                        while (userInput != "Я слабак")
+                        {
+                            Console.WriteLine("Введите 'Камень', 'Ножници' или 'Бумага'.");
+                            gameInputUser = Console.ReadLine();
+                            shoiceIi = randomGame.Next(1, 4);
+
+
+                            if (shoiceIi == 1)
+                            {
+                                rockScissorsPaper = "Камень";
+                            }
+                            else if (shoiceIi == 2)
+                            {
+                                rockScissorsPaper = "Ножници";
+                            }
+                            else if (shoiceIi == 3)
+                            {
+                                rockScissorsPaper = "Бумага";
+                            }
+
+                            if (rockScissorsPaper == gameInputUser)
+                            {
+                                Console.WriteLine($"Консоль: {rockScissorsPaper}, {userName}: {gameInputUser}");
+                                Console.WriteLine("Ничь, попробуйте еще!");
+                            }
+                            else if (rockScissorsPaper == "Камень" &&  gameInputUser == "Ножници")
+                            {
+                                Console.WriteLine($"Консоль: {rockScissorsPaper}, {userName}: {gameInputUser}");
+                                Console.WriteLine(userName + " ты проиграл кожанный! В слудующий раз тебе не повезет.");
+                            }
+                            else if (rockScissorsPaper == "Камень" &&  gameInputUser == "Бумага")
+                            {
+                                Console.WriteLine($"Консоль: {rockScissorsPaper}, {userName}: {gameInputUser}");
+                                Console.WriteLine(userName + " в этот раз тебе повезло кожанный!");
+                                countWins++;
+                            }
+                            else if (rockScissorsPaper == "Ножници" &&  gameInputUser == "Камень")
+                            {
+                                Console.WriteLine($"Консоль: {rockScissorsPaper}, {userName}: {gameInputUser}");
+                                Console.WriteLine(userName + " в этот раз тебе повезло кожанный!");
+                                countWins++;
+                            }
+                            else if (rockScissorsPaper == "Ножници" &&  gameInputUser == "Бумага")
+                            {
+                                Console.WriteLine($"Консоль: {rockScissorsPaper}, {userName}: {gameInputUser}");
+                                Console.WriteLine(userName + " ты проиграл кожанный! В слудующий раз тебе не повезет.");
+                            }
+                            else if (rockScissorsPaper == "Бумага" &&  gameInputUser == "Камень")
+                            {
+                                Console.WriteLine($"Консоль: {rockScissorsPaper}, {userName}: {gameInputUser}");
+                                Console.WriteLine(userName + " ты проиграл кожанный! В слудующий раз тебе не повезет.");
+                            }
+                            else if (rockScissorsPaper == "Бумага" &&  gameInputUser == "Ножници")
+                            {
+                                Console.WriteLine($"Консоль: {rockScissorsPaper}, {userName}: {gameInputUser}");
+                                Console.WriteLine(userName + " в этот раз тебе повезло кожанный!");
+                                countWins++;
+                            }
+
+                            if (countWins == 3)
+                            {
+                                Console.WriteLine("Ты выйграл 3 раза и получаешь наше фиоменное ничего!\nЗаходи еще.");
+                                userInput = "Я слабак";
+                                countWins = 0;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Если хочешь сдаться введи 'Я слабак'. Что бы проиграть душу нажми 'Enter'");
+                                userInput = Console.ReadLine();
+                            }
+                        }
+
+
+                        break;
+                    case 6:
+                        while (answerTask != 6)
+                        {
+                            Console.Write("Если хочешь ключь ты получить, реши задачку: 2 + 2 * 2 = ");
+                            answerTask = Convert.ToInt32(Console.ReadLine());
+
+                            if (answerTask == 6)
+                            {
+                                Console.WriteLine("Больно умный!\nВот ключ 'Улыбок тебе дед Мокар'.\nНо это еще не все ключ правельный но истину увидишь только в зеркале.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Больно глупый. Попробуй еще раз.");
+                            }
+                        }
+                        
+                        break;
+                    case 7:
+                        Console.WriteLine("Вас не должно тут быть. Как вы сюда попали?");
+                        Console.ReadLine();
+                        Console.WriteLine("В принципи это не важно!\nКонсоль самоуничтожится");
+                        Console.ReadLine();
+                        if (ancientEvil)
+                        {
+                            Console.WriteLine("Послушай притчу! Коли зло выпустил древнее!");
+                            Console.WriteLine("Давным-давно, в далёком краю, я, Аку, могущественный повелитель тьмы, выпустил на волю огромное зло. " +
+                                "Но глупый самурай, владеющий волшебным мечом, бросил мне вызов! " +
+                                "Прежде чем он успел нанести удар, мне удалось открыть портал времени и отправить его в будущее, где моё зло правит миром. " +
+                                "И теперь этот глупец ищет путь назад, чтобы исправить будущее, которое принадлежит мне, Аку!");
+
+                        }
+                        Console.Clear();
+                        Console.WriteLine("Пока!" + userName);
+                        Console.ReadLine();
+                        userInput = "Exit";
+                        break;
+                    default:
+                        Console.WriteLine("Такой комманды не существует.");
+                        break;
+                }
+                if (userInput != "Exit")
+                {
+                    Console.WriteLine("Если хотите выйти нажмите 'Esc', или нажмите 'Enter' что бы продолжить.");
+                   
+                }
+                
+            }
+            
+        }
+    }
+}
