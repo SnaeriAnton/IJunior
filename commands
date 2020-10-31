@@ -12,6 +12,7 @@ namespace commands
             string userName = Console.ReadLine();
             string userInput = " ";
             int NumberOfMenu;
+            string forcedExit = " ";
             Random randomColor = new Random();
             Random randomGame = new Random();
             int shoiceIi;
@@ -27,7 +28,7 @@ namespace commands
 
             Console.WriteLine("Если хотите вывести меню нажмите'Eтеук', если хотите уйти нажмите 'Esc'");
 
-            while (userInput != "Escape" && Console.ReadKey().Key != ConsoleKey.Escape)
+            while (forcedExit != "Escape" && Console.ReadKey().Key != ConsoleKey.Escape)
             {
                 Console.WriteLine("Выберите пункт меню\n" +
                     "1. Создан для причинения боли\n" +
@@ -227,7 +228,7 @@ namespace commands
                         Console.Clear();
                         Console.WriteLine("Пока!" + userName);
                         Console.ReadLine();
-                        userInput = "Escape"; 
+                        forcedExit = "Escape"; 
                         break;
                     default:
                         Console.WriteLine("Такой комманды не существует.");
@@ -236,7 +237,7 @@ namespace commands
 
 
 
-                if (userInput != "Escape")
+                if (forcedExit != "Escape")
                 {
                     Console.WriteLine("Если хотите выйти нажмите 'Esc', или нажмите 'Enter' что бы продолжить.");
 
