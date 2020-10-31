@@ -6,7 +6,6 @@ namespace commands
     {
         static void Main(string[] args)
         {
-            
 
 
             Console.Write("Введите ваше имя: ");
@@ -25,9 +24,10 @@ namespace commands
             bool ancientEvil = false;
             string usersTry;
 
+
             Console.WriteLine("Если хотите вывести меню нажмите'Eтеук', если хотите уйти нажмите 'Esc'");
 
-            while (Console.ReadKey().Key != ConsoleKey.Escape)
+            while (userInput != "Escape" && Console.ReadKey().Key != ConsoleKey.Escape)
             {
                 Console.WriteLine("Выберите пункт меню\n" +
                     "1. Создан для причинения боли\n" +
@@ -110,7 +110,7 @@ namespace commands
                             else if (i == 2)
                             {
                                 Console.WriteLine("Ты потерпел неудачу! Повезет в следующий раз. Возможно.");
-                                userInput = "Exit";
+                                userInput = "Escape"; 
                             } else
                             {
                                 Console.WriteLine("Мерзкий звук ошибки ЭЭЭЭЭЭЭЭЭ.\nПопробуй еще:");
@@ -227,20 +227,21 @@ namespace commands
                         Console.Clear();
                         Console.WriteLine("Пока!" + userName);
                         Console.ReadLine();
-                        userInput = "Exit";
+                        userInput = "Escape"; 
                         break;
                     default:
                         Console.WriteLine("Такой комманды не существует.");
                         break;
                 }
-                if (userInput != "Exit")
+
+
+
+                if (userInput != "Escape")
                 {
                     Console.WriteLine("Если хотите выйти нажмите 'Esc', или нажмите 'Enter' что бы продолжить.");
-                   
+
                 }
-                
             }
-            
         }
     }
 }
