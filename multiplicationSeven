@@ -1,0 +1,17 @@
+using System;
+
+namespace multiplicationSeven
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int seven = 0;
+            while (seven !=  98)
+            {
+                seven += 7;
+                Console.WriteLine(seven);
+            }
+        }
+    }
+}
