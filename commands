@@ -11,7 +11,7 @@ namespace commands
             Console.Write("Введите ваше имя: ");
             string userName = Console.ReadLine();
             string userInput = " ";
-            int NumberOfMenu;
+            int numberOfMenu;
             string forcedExit = " ";
             Random randomColor = new Random();
             Random randomGame = new Random();
@@ -21,7 +21,7 @@ namespace commands
             int consoleColorValue;
             int countWins = 0;
             int answerTask = 0;
-            bool Cyberpunk2077 = false;
+            bool cyberpunk2077 = false;
             bool ancientEvil = false;
             string usersTry;
 
