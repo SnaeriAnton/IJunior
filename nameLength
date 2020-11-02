@@ -10,9 +10,9 @@ namespace nameLength
             string nameUser = Console.ReadLine();
             Console.Write("Введите символ которым будет обрамлено ваше имя: ");
             char symbol = Convert.ToChar(Console.ReadLine());
-            int nameLength = nameUser.Length + 2;
+            int frameLength = nameUser.Length + 2;
 
-            for (int i = 0; i < nameLength; i++)
+            for (int i = 0; i < frameLength; i++)
             {
                 Console.Write(symbol);
             }
@@ -21,7 +21,7 @@ namespace nameLength
 
             
 
-            for (int i = 0; i < nameLength; i++)
+            for (int i = 0; i < frameLength; i++)
             {
                 Console.Write(symbol);
             }
