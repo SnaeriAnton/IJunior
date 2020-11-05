@@ -1,0 +1,185 @@
+using System;
+
+namespace legend
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Random random = new Random();
+            int userInput;
+            string messageAction = " ";
+
+            //hero
+            int healthHero = 1000;
+            int persentHealtHero = (healthHero * 70) / 100;
+            
+            bool rashamonCallOn = false;
+            int damageRashamon = 100;
+
+            int rollbackLuminus = 0;
+            bool blindness = false;
+            int threeMove = 0;
+            //boss
+            int healthBoss = 1500;
+            int damageBos = 400;
+            int actionBoss;
+            int criticalDamage = damageBos * 2;
+
+            while (healthHero > 0 && healthBoss > 0)
+            {
+                if (!blindness || threeMove == 3)
+                {
+                    actionBoss = random.Next(1, 5);
+                } 
+                else
+                {
+                    actionBoss = 0;
+                }
+                
+                Console.WriteLine($"\nЗдоровье героя: {healthHero}");
+                if (rashamonCallOn)
+                {
+                    Console.WriteLine($"Расшамон призван");
+                }
+                else
+                {
+                    Console.WriteLine($"Расшамон не призван");
+                }
+                Console.WriteLine($"Откат Люминус: {rollbackLuminus}\n");
+
+                Console.WriteLine($"Здоровье босса: {healthBoss}\n");
+
+                Console.WriteLine("Выберите действие героя:\n" +
+                    "1. Рашамон - призывает теневого духа (отнимает 100 хп персонажа).\n" +
+                    "2. Хуганзакура - наносит 100 ед. урона (может быть выполнен только после призыва теневого духа).\n" +
+                    "3. Межпространственный разлом - позволяет скрыться в разломе и востановить 250 хп. Урон по вам не проходит.\n" +
+                    "4. Люминус - оглушает его на 3 хода, (можно использовать если здорове героя болше 70%, откат заклятия 7 ходов).\n");
+
+                userInput = Convert.ToInt32(Console.ReadLine());
+                Console.Clear();
+                Console.WriteLine();
+
+                switch (userInput) //magic Hero
+                {
+                    case 1: //Rashamon
+                        if (rashamonCallOn)
+                        {
+                            messageAction = "Рашамон уже призван.";
+                        }
+                        else
+                        {
+                            healthHero -= 100;
+                            rashamonCallOn = true;
+                            messageAction = "Рашамон призван.";
+                        }
+                        break;
+                    case 2: //Хуганазакура
+                        if (rashamonCallOn)
+                        {
+                            if (actionBoss == 2)
+                            {
+                                messageAction = "Босс блокирует вашу атаку.";
+                            }
+                            else
+                            {
+                                healthBoss -= damageRashamon;
+                                messageAction = "Рашмон наносит урон.";
+                            }
+                        }
+                        else
+                        {
+                            messageAction = "Рашамон не призван.";
+                        }
+                        break;
+                    case 3: // Interdimensional rify
+                        healthHero += 250;
+                        if (healthHero > 1001)
+                        {
+                            healthHero = 1000;
+                        }
+                        messageAction = "Вотсановленно 250 едениц здоровья, Любой урон заблокирован.";
+                        break;
+                    case 4: // Люминус
+
+                        if (rollbackLuminus == 0)
+                        {
+                            if (persentHealtHero <= healthHero)
+                            {
+                                blindness = true;
+                                messageAction = "Вы оглушили босса на 3 хода";
+                                rollbackLuminus = 7;
+                            }
+                            else
+                            {
+                                messageAction = "У вас слишком мало здоровья.";
+                            }
+                            
+                        }
+                        else
+                        {
+                            messageAction = "Заклятие все еще откатываеться!";
+                        }
+                        break;
+
+                    default:
+                        messageAction = "Пропуск хода может привести к поражению.";
+                        break;
+                }
+
+                if (rollbackLuminus <= 7 && rollbackLuminus != 0)
+                {
+                    rollbackLuminus--;
+                }
+
+                Console.WriteLine("Действие героя: \n\t" + messageAction);
+
+                if (blindness && threeMove != 3)
+                {
+                    messageAction = "Босс оглушен";
+                    threeMove++;
+                }
+                else
+                {
+                    threeMove = 0;
+                    blindness = false;
+
+                    switch (actionBoss) //boss attack
+                    {
+                        case 1:
+                            if (userInput == 3)
+                            {
+                                messageAction = "Босс атакует, но вы не получаете урона.";
+                            }
+                            else
+                            {
+                                healthHero -= damageBos;
+                                messageAction = "Босс атакует.";
+                            }
+                            break;
+                        case 2:
+                            messageAction = "Босс ставит блок.";
+                            break;
+                        case 4:
+                            healthHero -= criticalDamage;
+                            messageAction = "Босс наносит критический урон";
+                            break;
+                    }
+                }
+                Console.WriteLine("Действие босса: \n\t" + messageAction);
+            }
+            if (healthBoss <= 0 && healthHero <= 0)
+            {
+                Console.WriteLine("Бой окончин оба погибли!");
+            }
+            else if (healthBoss <= 0 )
+            {
+                Console.WriteLine("Бой окончин победил герой!");
+            }
+            else
+            {
+                Console.WriteLine("Бой окончин победил босс!");
+            }
+        }
+    }
+}
