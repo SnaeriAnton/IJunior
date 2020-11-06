@@ -12,7 +12,9 @@ namespace legend
 
             //hero
             int healthHero = 1000;
+            int healthHeroDefault = 1000;
             int persentHealtHero = (healthHero * 70) / 100;
+            int persentHealtHeroValue = 70;
             
             bool rashamonCallOn = false;
             int damageRashamon = 100;
@@ -20,8 +22,12 @@ namespace legend
             int InterdimensionalRifyTreatment = 250;
 
             int rollbackLuminus = 0;
+            int rollbackLuminusDefault = 7;
             bool blindness = false;
             int threeMove = 0;
+            int threeMovDefaulte = 3;
+
+
             //boss
             int healthBoss = 1500;
             int damageBos = 400;
@@ -56,7 +62,7 @@ namespace legend
                     "1. Рашамон - призывает теневого духа (отнимает " + damageRashamonHero + " хп персонажа).\n" +
                     "2. Хуганзакура - наносит " + damageRashamon + "  ед. урона (может быть выполнен только после призыва теневого духа).\n" +
                     "3. Межпространственный разлом - позволяет скрыться в разломе и востановить " + InterdimensionalRifyTreatment + "  хп. Урон по вам не проходит.\n" +
-                    "4. Люминус - оглушает его на 3 хода, (можно использовать если здорове героя болше 70%, откат заклятия 7 ходов).\n");
+                    "4. Люминус - оглушает его на " + threeMovDefaulte + " хода, (можно использовать если здорове героя болше " + persentHealtHeroValue + "%, откат заклятия " + rollbackLuminusDefault + " ходов).\n");
 
                 userInput = Convert.ToInt32(Console.ReadLine());
                 Console.Clear();
@@ -98,7 +104,7 @@ namespace legend
                         healthHero += InterdimensionalRifyTreatment;
                         if (healthHero > 1001)
                         {
-                            healthHero = 1000;
+                            healthHero = healthHeroDefault;
                         }
                         messageAction = "Вотсановленно 250 едениц здоровья, Любой урон заблокирован.";
                         break;
@@ -110,7 +116,7 @@ namespace legend
                             {
                                 blindness = true;
                                 messageAction = "Вы оглушили босса на 3 хода";
-                                rollbackLuminus = 7;
+                                rollbackLuminus = rollbackLuminusDefault;
                             }
                             else
                             {
