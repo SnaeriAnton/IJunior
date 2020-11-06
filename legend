@@ -16,6 +16,8 @@ namespace legend
             
             bool rashamonCallOn = false;
             int damageRashamon = 100;
+            int damageRashamonHero = 100;
+            int InterdimensionalRifyTreatment = 250;
 
             int rollbackLuminus = 0;
             bool blindness = false;
@@ -51,9 +53,9 @@ namespace legend
                 Console.WriteLine($"Здоровье босса: {healthBoss}\n");
 
                 Console.WriteLine("Выберите действие героя:\n" +
-                    "1. Рашамон - призывает теневого духа (отнимает 100 хп персонажа).\n" +
-                    "2. Хуганзакура - наносит 100 ед. урона (может быть выполнен только после призыва теневого духа).\n" +
-                    "3. Межпространственный разлом - позволяет скрыться в разломе и востановить 250 хп. Урон по вам не проходит.\n" +
+                    "1. Рашамон - призывает теневого духа (отнимает " + damageRashamonHero + " хп персонажа).\n" +
+                    "2. Хуганзакура - наносит " + damageRashamon + "  ед. урона (может быть выполнен только после призыва теневого духа).\n" +
+                    "3. Межпространственный разлом - позволяет скрыться в разломе и востановить " + InterdimensionalRifyTreatment + "  хп. Урон по вам не проходит.\n" +
                     "4. Люминус - оглушает его на 3 хода, (можно использовать если здорове героя болше 70%, откат заклятия 7 ходов).\n");
 
                 userInput = Convert.ToInt32(Console.ReadLine());
@@ -69,7 +71,7 @@ namespace legend
                         }
                         else
                         {
-                            healthHero -= 100;
+                            healthHero -= damageRashamonHero;
                             rashamonCallOn = true;
                             messageAction = "Рашамон призван.";
                         }
@@ -93,7 +95,7 @@ namespace legend
                         }
                         break;
                     case 3: // Interdimensional rify
-                        healthHero += 250;
+                        healthHero += InterdimensionalRifyTreatment;
                         if (healthHero > 1001)
                         {
                             healthHero = 1000;
