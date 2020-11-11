@@ -1,0 +1,32 @@
+using System;
+
+namespace sumTwoDimensionalArray
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int sumTwoRow = 0;
+            int multiplicationOneColumn;
+            int[,] array = { { 1, 2, 3, 4, 5, 6 }, { 7, 8, 9, 1, 2, 3 } };
+
+            for (int i = 0; i < array.GetLength(0); i++)
+            {
+                for (int j = 0; j < array.GetLength(1); j++)
+                {
+                    Console.Write(array[i,j] + " ");
+                }
+                Console.WriteLine();
+            }
+
+            for (int i = 0; i < array.GetLength(1); i++)
+            {
+                sumTwoRow += array[1, i];
+            }
+            Console.WriteLine("Сумма второй строки массива: " + sumTwoRow);
+
+            multiplicationOneColumn = array[0, 0] * array[1, 0];
+            Console.WriteLine("Произведение первого столбца массива: " + multiplicationOneColumn);
+        }
+    }
+}
