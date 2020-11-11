@@ -28,13 +28,7 @@ namespace sumTwoDimensionalArray
 
             for (int i = 0; i < array.GetLength(0); i++)
             {
-                for (int j = 0; j < array.GetLength(1); j++)
-                {
-                    if (j == 0)
-                    {
-                        multiplicationOneColumn *= array[i, j];
-                    }
-                }
+                multiplicationOneColumn *= array[i, 0];
             }
 
             Console.WriteLine("Произведение первого столбца массива: " + multiplicationOneColumn);
