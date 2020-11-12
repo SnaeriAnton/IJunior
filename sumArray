@@ -1,0 +1,57 @@
+using System;
+
+namespace sumArray
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string userInput = " ";
+            int[] array = new int[1];
+            int[] newArray;
+            int sumArray = 0;
+
+            while (true)
+            {
+                newArray = new int[array.Length + 1];
+                Console.Write("Что бы выйти введите 'exit'.\nВведите еще элемент или введите 'sum' что бы посчитать сумму всех элементов: ");
+                userInput = Console.ReadLine();
+                if (userInput == "exit")
+                {
+                    break;
+                }
+                else if (userInput == "sum")
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        sumArray += array[i];
+                    }
+                    Console.WriteLine($"Сумма всех элементов = {sumArray}");
+                    sumArray = 0;
+                    continue;
+                } 
+                else
+                {
+                    array[array.Length - 1] = Convert.ToInt32(userInput);
+                }
+                for (int i = 0; i < array.Length; i++)
+                {
+                    Console.Write(array[i] + " ");
+                }
+                Console.WriteLine();
+
+                for (int i = 0; i < array.Length; i++)
+                {
+                    newArray[i] = array[i];
+                }
+                array = newArray;
+            }
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                sumArray += array[i];
+            }
+            Console.WriteLine($"Сумма всех элементов массива = {sumArray}");
+        }
+    }
+}
