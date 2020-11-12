@@ -7,13 +7,12 @@ namespace sumArray
         static void Main(string[] args)
         {
             string userInput = " ";
-            int[] array = new int[1];
+            int[] array = new int[0];
             int[] newArray;
             int sumArray = 0;
 
             while (true)
-            {
-                newArray = new int[array.Length + 1];
+            {               
                 Console.Write("Что бы выйти введите 'exit'.\nВведите еще элемент или введите 'sum' что бы посчитать сумму всех элементов: ");
                 userInput = Console.ReadLine();
                 if (userInput == "exit")
@@ -32,6 +31,12 @@ namespace sumArray
                 } 
                 else
                 {
+                    newArray = new int[array.Length + 1];
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        newArray[i] = array[i];
+                    }
+                    array = newArray;
                     array[array.Length - 1] = Convert.ToInt32(userInput);
                 }
                 for (int i = 0; i < array.Length; i++)
@@ -39,19 +44,7 @@ namespace sumArray
                     Console.Write(array[i] + " ");
                 }
                 Console.WriteLine();
-
-                for (int i = 0; i < array.Length; i++)
-                {
-                    newArray[i] = array[i];
-                }
-                array = newArray;
             }
-
-            for (int i = 0; i < array.Length; i++)
-            {
-                sumArray += array[i];
-            }
-            Console.WriteLine($"Сумма всех элементов массива = {sumArray}");
         }
     }
 }
