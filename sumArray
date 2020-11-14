@@ -11,15 +11,11 @@ namespace sumArray
             int[] newArray;
             int sumArray = 0;
 
-            while (true)
+            while (userInput != "exit")
             {               
                 Console.Write("Что бы выйти введите 'exit'.\nВведите еще элемент или введите 'sum' что бы посчитать сумму всех элементов: ");
                 userInput = Console.ReadLine();
-                if (userInput == "exit")
-                {
-                    break;
-                }
-                else if (userInput == "sum")
+                if (userInput == "sum")
                 {
                     for (int i = 0; i < array.Length; i++)
                     {
@@ -29,7 +25,7 @@ namespace sumArray
                     sumArray = 0;
                     continue;
                 } 
-                else
+                else if(userInput != "exit")
                 {
                     newArray = new int[array.Length + 1];
                     for (int i = 0; i < array.Length; i++)
