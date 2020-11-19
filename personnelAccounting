@@ -1,0 +1,140 @@
+using System;
+
+namespace personnelAccounting
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string[] fullName = {"Снаэрир Антон Вадимович", "Петров Сергей Юрьевич"};
+            string[] position = {"Разработчик", "Клерк"};
+            string userInput;
+            int indexArray;
+            bool isOpen = true;
+
+            while (isOpen)
+            {
+                Meny();
+                userInput = Console.ReadLine();
+
+                switch (userInput)
+                {
+                    case "1":
+                        Console.Write("Введите Фамилию Имя Отчество: ");
+                        userInput = Console.ReadLine();
+                        fullName= addDossier(fullName, userInput);
+                        Console.Write("Введите должность: ");
+                        userInput = Console.ReadLine();
+                        position = addDossier(position, userInput);
+                        Console.WriteLine("Запись успешно добавлина.");
+                        break;
+                    case "2":
+                        printAllPosition(fullName, position);
+                        break;
+                    case "3":
+                        Console.Write("Введите номер досье который хотите удалить: ");
+                        indexArray = (Convert.ToInt32(Console.ReadLine()) - 1);
+                        fullName = deliteDossier(fullName, indexArray);
+                        position = deliteDossier(position, indexArray);
+                        Console.WriteLine($"Досье №: {indexArray + 1} успешно удалено.");
+                        break;
+                    case "4":
+                        Console.Write("Введите фамилию человека которго хотите найти: ");
+                        userInput = Console.ReadLine();
+                        searchPerson(fullName, position, userInput);
+                        break;
+                    case "5":
+                        isOpen = false;
+                    break;
+                }
+
+
+                Console.ReadKey();
+                Console.Clear();
+            }
+        }
+
+        static void Meny()
+        {
+            Console.WriteLine("Выберите пункт меню:" +
+                "\n1.Добавить досье." +
+                "\n2.Вывести все досье." +
+                "\n3.Удалить досье." +
+                "\n4.Поиск по фамилии." +
+                "\n5.Выход.");
+        }
+
+        static string[] addDossier(string[] arrayOld, string userInput)
+        {
+            string[] newArray = new string[arrayOld.Length + 1];
+
+            for (int i = 0; i < arrayOld.Length; i++)
+            {
+                newArray[i] = arrayOld[i];
+            }
+            newArray[arrayOld.Length] = userInput;
+            return newArray;
+        }
+
+        static void searchPerson(string[] fullName, string[] position, string secondName)
+        {
+            int count = 0;
+            bool searcResult = true;
+            for (int i = 0; i < fullName.Length; i++)
+            {
+                for (int j = 0; j < secondName.Length; j++)
+                {
+                    if (secondName[j] == fullName[i][j])
+                    {
+                        count++;
+                    }
+                    else
+                    {
+                        count = 0;
+                        break;
+                    }
+                }
+                if (count == secondName.Length)
+                {
+                    Console.Write($"{i + 1}. ФИО: {fullName[i]}, Должность: {position[i]}");
+                    searcResult = false;
+                    break;
+                }
+            }
+            if (searcResult)
+            {
+                Console.WriteLine("Досье с такой фамилией нету.");
+            }
+        }
+
+        static string[] deliteDossier(string[] arrayOld, int indexArray)
+        {
+            string[] newArray = new string[arrayOld.Length - 1];
+            for (int i = 0; i < arrayOld.Length - 1; i++)
+            {
+                if (i >= indexArray)
+                {
+                    newArray[i] = arrayOld[i + 1];
+                }
+                else
+                {
+                    newArray[i] = arrayOld[i];
+                }
+            }
+            return newArray;
+        }
+
+        static void printAllPosition(string[] fullName, string[] position)
+        {
+            for (int i = 0; i < fullName.Length; i++)
+            {
+                Console.Write($"{i + 1}. ФИО: {fullName[i]}, Должность: {position[i]}");
+                if ((i + 1) < fullName.Length)
+                {
+                    Console.Write(" - ");
+                }
+            }
+
+        }
+    }
+}
