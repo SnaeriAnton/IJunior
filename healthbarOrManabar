@@ -1,0 +1,36 @@
+using System;
+
+namespace healthbarOrManabar
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int health;
+            int healthValum;
+            Console.Write("Введите колличество жизней: ");
+            healthValum = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Введите процент эизней: ");
+            health = (healthValum *Convert.ToInt32(Console.ReadLine())/100);
+            PrintHealthbar(health, healthValum);
+        }
+        static void PrintHealthbar(int health, int healthValum)
+        {
+            Console.SetCursorPosition(6, 6);
+            Console.Write("[");
+            for (int i = 0; i < healthValum; i++)
+            {
+                if (health > 0)
+                {
+                    Console.Write("#");
+                    health--;
+                }
+                else
+                {
+                    Console.Write("_");
+                }
+            }
+            Console.WriteLine("]");
+        }
+    }
+}
