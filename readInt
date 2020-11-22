@@ -1,0 +1,28 @@
+using System;
+
+namespace readInt
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string userInput = " ";
+            bool result = true;
+
+            while (result)
+            {
+                Console.Write("введите пожалуйста число: ");
+                userInput = Console.ReadLine();
+                result = TryToConvert(userInput);
+                Console.WriteLine("Не верно попробуйте еще раз");
+                Console.Clear();
+            }
+            Console.WriteLine($"Введенное пользователем число: {userInput}");
+        }
+        static bool TryToConvert(string valum)
+        {
+            int userNumber;
+            return !int.TryParse(valum, out userNumber);
+        }
+    }
+}
