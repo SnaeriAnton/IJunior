@@ -1,0 +1,45 @@
+using System;
+
+namespace shuffle
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string[] array = { "Антон", "Борис", "Вера", "Григорий", "Дмитрий", "Елена", "Жозефина", "Зинаида", "Ирина", "Катерина" };
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                Console.Write(array[i] + " ");
+            }
+            Console.WriteLine();
+            string[] mixArray = Shuffle(array);
+            for (int i = 0; i < mixArray.Length; i++)
+            {
+                Console.Write(mixArray[i] + " ");
+            }
+            Console.WriteLine();
+        }
+        static string[] Shuffle(string[] array)
+        {
+            Random random = new Random();
+            int randNumber;
+            bool successfully = true;
+            string[] newArray = new string[array.Length];
+            for (int i = 0; i < array.Length; i++)
+            {
+                while (successfully)
+                {
+                    randNumber = random.Next(0, 10);
+                    if (newArray[randNumber] == null)
+                    {
+                        newArray[randNumber] = array[i];
+                        successfully = false;
+                    }
+                }
+                successfully = true;
+            }
+            return newArray;
+        }
+    }
+}
