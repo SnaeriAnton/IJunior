@@ -6,23 +6,23 @@ namespace readInt
     {
         static void Main(string[] args)
         {
+            Console.WriteLine($"Введенное пользователем число: {TryToConvert()}");
+        }
+        static int TryToConvert()
+        {
             string userInput = " ";
             bool result = true;
+            int userNumber = 0;
 
             while (result)
             {
-                Console.Write("введите пожалуйста число: ");
+                Console.Write("Введите пожалуйста число: ");
                 userInput = Console.ReadLine();
-                result = TryToConvert(userInput);
+                result = !int.TryParse(userInput, out userNumber);
                 Console.WriteLine("Не верно попробуйте еще раз");
                 Console.Clear();
             }
-            Console.WriteLine($"Введенное пользователем число: {userInput}");
-        }
-        static bool TryToConvert(string valum)
-        {
-            int userNumber;
-            return !int.TryParse(valum, out userNumber);
+            return userNumber;
         }
     }
 }
