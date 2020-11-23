@@ -1,3 +1,4 @@
+
 using System;
 
 namespace healthbarOrManabar
@@ -6,13 +7,13 @@ namespace healthbarOrManabar
     {
         static void Main(string[] args)
         {
-            int health;
-            int healthValum;
+            int persentHealth;
+            int numberHealth;
             Console.Write("Введите колличество жизней: ");
-            healthValum = Convert.ToInt32(Console.ReadLine());
-            Console.Write("Введите процент эизней: ");
-            health = (healthValum *Convert.ToInt32(Console.ReadLine())/100);
-            PrintHealthbar(health, healthValum);
+            numberHealth = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Введите процент жизней: ");
+            persentHealth = (numberHealth *Convert.ToInt32(Console.ReadLine())/100);
+            PrintHealthbar(persentHealth, numberHealth);
         }
         static void PrintHealthbar(int health, int healthValum)
         {
