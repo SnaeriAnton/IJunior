@@ -6,24 +6,24 @@ namespace healthbarOrManabar
     {
         static void Main(string[] args)
         {
-            int persentHealth;
             int numberHealth;
+            int persentHealth;
             Console.Write("Введите колличество жизней: ");
             numberHealth = Convert.ToInt32(Console.ReadLine());
             Console.Write("Введите процент жизней: ");
             persentHealth = (numberHealth *Convert.ToInt32(Console.ReadLine())/100);
-            PrintHealthbar(persentHealth, numberHealth);
+            PrintHealthbar(numberHealth, persentHealth);
         }
-        static void PrintHealthbar(int fullHealth, int remainderHealth)
+        static void PrintHealthbar(int health, int remainderHealth)
         {
             Console.SetCursorPosition(6, 6);
             Console.Write("[");
-            for (int i = 0; i < remainderHealth; i++)
+            for (int i = 0; i < health; i++)
             {
-                if (fullHealth > 0)
+                if (remainderHealth > 0)
                 {
                     Console.Write("#");
-                    fullHealth--;
+                    remainderHealth--;
                 }
                 else
                 {
