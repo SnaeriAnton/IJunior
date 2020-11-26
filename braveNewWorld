@@ -1,0 +1,159 @@
+using System;
+using System.IO;
+
+namespace braveNewWorld
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.CursorVisible = false;
+            
+            bool isPlay = true;
+            int heroX, heroY;
+            int heroDX = 0, heroDY = 0;
+            int countPluss = 0;
+            int countPlussOnMap = 1;
+            int exitX, exitY;
+
+            char[,] map = ReadMap(out heroX, out heroY, countPlussOnMap, out exitX, out exitY);
+            Console.WriteLine($"Правила:\nЧто бы закончить игру вам нужно собрать {countPlussOnMap} +, и тогда вы сможете выйти через | (дверь).\nЧто бы начать игру нажмите любую клавишу.");;
+            Console.ReadKey();
+            Console.Clear();
+
+            DrawMap(map);
+
+            while (isPlay)
+            {
+                
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo key = Console.ReadKey(true);
+
+                    ChangeDirection(ref heroDX, ref heroDY, key);
+                    
+                    if (map[heroX + heroDX, heroY + heroDY] != '#')
+                    {
+                        Move(map, '@', ref heroX, ref heroY, heroDX, heroDY);
+                        CollectionPluss(map, heroX, heroY, ref countPluss);
+                    }   
+                }
+                if (map[heroX, heroY] == '|' && countPluss == countPlussOnMap)
+                {
+                    isPlay = false;
+                }
+                System.Threading.Thread.Sleep(100);
+                PribtStatistics(countPluss, countPlussOnMap);
+            }
+            Console.Clear();
+            Console.WriteLine("Поздравляю вы покинули пещеру живым");
+        }
+
+        static void CollectionPluss(char[,] map, int heroX, int heroY, ref int countPluss)
+        {
+            if (map[heroX, heroY] == '+')
+            {
+                countPluss++;
+            }
+        }
+
+        static void PribtStatistics(int countPluss, int countPlussOnMap)
+        {
+            if (countPluss == countPlussOnMap)
+            {
+                Console.SetCursorPosition(0, 17);
+                Console.WriteLine("Дверь открыта!");
+            } else
+            {
+                Console.SetCursorPosition(0, 16);
+                Console.WriteLine("Колличество съеденных +: " + countPluss + "/" + countPlussOnMap);
+            }
+        }
+
+        static void Move(char[,] map, char symbol, ref int X, ref int Y, int DX, int DY)
+        {
+            Console.SetCursorPosition(Y, X);
+            Console.Write(" ");
+
+            X += DX;
+            Y += DY;
+
+            Console.SetCursorPosition(Y, X);
+            Console.Write(symbol);
+        }
+        static void ChangeDirection(ref int DX, ref int DY, ConsoleKeyInfo key)
+        {
+            switch (key.Key)
+            {
+                case ConsoleKey.UpArrow:
+                    DX = -1; DY = 0;
+                    break;
+                case ConsoleKey.DownArrow:
+                    DX = 1; DY = 0;
+                    break;
+                case ConsoleKey.LeftArrow:
+                    DX = 0; DY = -1;
+                    break;
+                case ConsoleKey.RightArrow:
+                    DX = 0; DY = 1;
+                    break;
+            }
+        }
+        static void DrawMap(char[,] map)
+        {
+            Console.SetWindowSize(map.GetLength(1)+1, map.GetLength(0)+2);
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    Console.Write(map[i, j]);
+                }
+                Console.WriteLine();
+            }
+        }
+        static char[,] ReadMap(out int heroX, out int heroY, int countPlussOnMap, out int exitX, out int exitY)
+        {
+            heroX = 0;
+            heroY = 0;
+            exitX = 0;
+            exitY = 0;
+            Random random = new Random();
+            int plussX = 0;
+            int plussY = 0;
+
+            string[] newFile = File.ReadAllLines($"Map/mapOne.txt");
+            char[,] map = new char[newFile.Length, newFile[0].Length];
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    map[i, j] = newFile[i][j];
+                    if (map[i,j] == '@')
+                    {
+                        heroX = i;
+                        heroY = j;
+                    }
+                    else if (map[i,j] == '|')
+                    {
+                        exitX = i;
+                        exitY = j;
+                    }
+                }
+            }
+            for (int i = 0; i < countPlussOnMap; i++)
+            {
+                plussX = random.Next(0, map.GetLength(0));
+                plussY = random.Next(0, map.GetLength(1));
+                if (map[plussX, plussY] == ' ')
+                {
+                    map[plussX, plussY] = '+';
+                } 
+                else
+                {
+                    i--;
+                }
+            }
+            return map;
+        }
+    }
+}
