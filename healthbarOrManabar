@@ -14,11 +14,11 @@ namespace healthbarOrManabar
             persentHealth = (numberHealth *Convert.ToInt32(Console.ReadLine())/100);
             PrintHealthbar(numberHealth, persentHealth);
         }
-        static void PrintHealthbar(int health, int remainderHealth)
+        static void PrintHealthbar(int fullHealth, int remainderHealth)
         {
             Console.SetCursorPosition(6, 6);
             Console.Write("[");
-            for (int i = 0; i < health; i++)
+            for (int i = 0; i < fullHealth; i++)
             {
                 if (remainderHealth > 0)
                 {
