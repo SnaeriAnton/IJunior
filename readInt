@@ -6,17 +6,17 @@ namespace readInt
     {
         static void Main(string[] args)
         {
-            Console.WriteLine($"Введенное пользователем число: {ReadAndConvert()}");
+            Console.WriteLine($"Введенное пользователем число: {ReadNumbers()}");
         }
-        static int ReadAndConvert()
+        static int ReadNumbers()
         {
-            bool result = true;
+            bool result = false;
             int userNumber = 0;
 
-            while (result)
+            while (!result)
             {
                 Console.Write("Введите пожалуйста число: ");
-                result = !int.TryParse(Console.ReadLine(), out userNumber);
+                result = int.TryParse(Console.ReadLine(), out userNumber);
                 Console.WriteLine("Не верно попробуйте еще раз");
                 Console.Clear();
             }
