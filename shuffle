@@ -13,14 +13,14 @@ namespace shuffle
                 Console.Write(array[i] + " ");
             }
             Console.WriteLine();
-            string[] mixArray = Shuffle(array);
-            for (int i = 0; i < mixArray.Length; i++)
+            Shuffle(array);
+            for (int i = 0; i < array.Length; i++)
             {
-                Console.Write(mixArray[i] + " ");
+                Console.Write(array[i] + " ");
             }
             Console.WriteLine();
         }
-        static string[] Shuffle(string[] array)
+        static void Shuffle(string[] array)
         {
             Random random = new Random();
             int randNumber;
@@ -33,7 +33,6 @@ namespace shuffle
                 array[i] = array[randNumber];
                 array[randNumber] = copyElementArray;
             }
-            return array;
         }
     }
 }
