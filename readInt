@@ -6,9 +6,9 @@ namespace readInt
     {
         static void Main(string[] args)
         {
-            Console.WriteLine($"Введенное пользователем число: {ReadNumbers()}");
+            Console.WriteLine($"Введенное пользователем число: {ReadNumber()}");
         }
-        static int ReadNumbers()
+        static int ReadNumber()
         {
             bool result = false;
             int userNumber = 0;
