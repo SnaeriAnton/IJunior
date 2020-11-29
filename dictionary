@@ -1,0 +1,45 @@
+using System;
+using System.Collections.Generic;
+
+namespace dictionary
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string userInput = " ";
+            bool bookOpen = true;
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            dictionary.Add("Смерть", "Прекращение жизнедеятельности организма.");
+            dictionary.Add("Дань", "Подать с населения или налог, взимаемыйпобедителем с побежденных.");
+            dictionary.Add("Любовь", "Глубокое эмоциональное влечение,сильное сердечное чувство.");
+            dictionary.Add("Судьба", "Стечение обстоятельств, не зависящих от воли человека, ход жизненныхсобытий.");
+            dictionary.Add("Капитуляция", "Прекращение военных действий и сдача победителюна продиктованных им условиях.");
+            dictionary.Add("Пророк", "В религии: избранник Бога на земле, открывающий еговолю и смысл истории - прошедшее, настоящее и будущее.");
+            
+            while (bookOpen)
+            {
+                Console.WriteLine("Список слов словаря:");
+                foreach (var key in dictionary.Keys)
+                {
+                    Console.WriteLine(key);
+                }
+                Console.Write("\nТолковй словарь.\nЧто бы выйте введите exit.\nВведите слово: ");
+                userInput = Console.ReadLine();
+                if (dictionary.ContainsKey(userInput))
+                {
+                    Console.WriteLine(userInput + " - " + dictionary[userInput]);
+                    Console.ReadKey();
+                }
+                else if (userInput == "exit")
+                {
+                    bookOpen = false;
+                }
+                else 
+                {
+                    Console.WriteLine("Такого слова нету в словаре. Попробуйте еще раз.\n");
+                }
+            }
+        }
+    }
+}
