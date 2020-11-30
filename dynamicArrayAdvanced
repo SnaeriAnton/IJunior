@@ -1,0 +1,51 @@
+using System;
+using System.Collections.Generic;
+
+namespace dynamicArrayAdvanced
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            List<int> numbers = new List<int>();
+            string userInput = "";
+            int sumList = 0;
+
+            int newNumber = 0;
+
+            while (userInput != "exit")
+            {
+                Console.Write("Что бы посчитать сумму всех элементов введите 'sum'.\nЕсли хотие выйти введите 'exit'.\n\nВведите число которое хотите добавить в список: ");
+                userInput = Console.ReadLine();
+                
+                if (userInput == "sum")
+                {
+                    for (int i = 0; i < numbers.Count; i++)
+                    {
+                        sumList += numbers[i];
+                    }
+                    Console.WriteLine($"Сумма всех элементов = {sumList}");
+                    sumList = 0;
+                }
+                else if (userInput != "exit")
+                {
+                    bool result = int.TryParse(userInput, out newNumber);
+                    if (result)
+                    {
+                        numbers.Add(newNumber);
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nВы ввели не коректные данные попробуйте еще раз.\n");
+                    }
+                }
+                for (int i = 0; i < numbers.Count; i++)
+                {
+                    Console.Write(numbers[i] + " ");
+                }
+                Console.WriteLine();
+                Console.WriteLine();
+            }
+        }
+    }
+}
