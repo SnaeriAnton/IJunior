@@ -1,0 +1,35 @@
+using System;
+using System.Collections.Generic;
+
+namespace queueInShop
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int countShop = 0;
+            int numberOfClient = 0;
+            int lengthTurn;
+            Queue<int> buyers = new Queue<int>();
+            buyers.Enqueue(100);
+            buyers.Enqueue(324);
+            buyers.Enqueue(824);
+            buyers.Enqueue(34);
+            buyers.Enqueue(1042);
+            buyers.Enqueue(41562);
+            buyers.Enqueue(5134);
+            buyers.Enqueue(232);
+            lengthTurn = buyers.Count;
+
+            while (lengthTurn != numberOfClient)
+            {
+                Console.WriteLine("Денег в кассе: " + countShop);
+                Console.WriteLine($"Вы обслуживаете {++numberOfClient} клиента. Сумма покупок: {buyers.Peek()}");
+                countShop += buyers.Dequeue();
+                Console.ReadKey();
+                Console.Clear();
+            }
+            Console.WriteLine("Выручка магазина составила: " + countShop);
+        }
+    }
+}
