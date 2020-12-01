@@ -1,0 +1,66 @@
+using System;
+using System.Collections.Generic;
+
+namespace personelAccountingCollection
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string userInput;
+            bool isOpen = true;
+            int countDossier = 0;
+            Dictionary<string, string> dossiers = new Dictionary<string, string>();
+            dossiers.Add("Разработчик","Снаэри Антон Вадимович");
+            dossiers.Add("Бухгалтер","Степан Юрий Олегович");
+            dossiers.Add("Учитель","Крылова Светлана Алексеевна");
+
+            while (isOpen)
+            {
+                Console.Write("1.Добавить досье.\n" +
+                "2.Вывести все досье.\n" +
+                "3.Удалить досье.\n" +
+                "4.Выход.\n" +
+                "Выберите пункт меню: ");
+                userInput = Console.ReadLine();
+
+                switch (Convert.ToInt32(userInput))
+                {
+                    case 1:
+                        Console.Write("Введите с начало должность, а затем ФИО:  ");
+                        dossiers.Add(Console.ReadLine(), Console.ReadLine());
+                        break;
+                    case 2:
+                        foreach (var dossier in dossiers)
+                        {
+                            Console.Write($" {++countDossier}. ФИО: {dossier.Value}, Должность: {dossier.Key}");
+                            if (countDossier < dossiers.Count)
+                            {
+                                Console.Write(" -");
+                            }
+                        }
+                        Console.WriteLine();
+                        break;
+                    case 3:
+                        Console.Write("Введите номер досье котоырй хотите удалить: ");
+                        userInput = Console.ReadLine();
+                        foreach (var dossier in dossiers)
+                        {
+                            ++countDossier;
+                            if (Convert.ToInt32(userInput) == countDossier)
+                            {
+                                dossiers.Remove(dossier.Key);
+                                break;
+                            }
+                        }
+                        Console.WriteLine("Досье удалено.");
+                        break;
+                    case 4:
+                        isOpen = false;
+                        break;
+                }
+                countDossier = 0;
+            } 
+        }
+    }
+}
