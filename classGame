@@ -1,0 +1,34 @@
+using System;
+
+namespace classGame
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Player player = new Player("Гатс", "Берсерк", 100, 5);
+            player.ShowInfo();
+        }
+    }
+
+    class Player
+    {
+        private string _name;
+        private string _classPlayer;
+        private int _health;
+        private int _damag;
+
+        public Player(string name, string classPlayer, int health, int damage)
+        {
+            _name = name;
+            _classPlayer = classPlayer;
+            _health = health;
+            _damag = damage;
+        }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine($"Имя игрока: {_name}\nКласс игрока: {_classPlayer}\nЖизни игрока: {_health}\nУрон от атаки: {_damag}");
+        }
+    }
+}
