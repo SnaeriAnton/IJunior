@@ -1,0 +1,42 @@
+using System;
+
+namespace workProperties
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Painting player = new Painting(new Player(5, 5));
+            player.PaintingPlayer();
+        }
+    }
+
+    class Player
+    {
+        public int X { get; private set; }
+        public int Y { get; private set; }
+
+        public Player(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+    }
+
+    class Painting
+    {
+        public Player _player;
+
+        public Painting(Player player)
+        {
+            _player = player;
+        }
+
+
+        public void PaintingPlayer()
+        {
+            Console.SetCursorPosition(_player.X, _player.Y);
+            Console.WriteLine("Игрок");
+        }
+    }
+}
