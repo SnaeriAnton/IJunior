@@ -6,7 +6,7 @@ namespace workProperties
     {
         static void Main(string[] args)
         {
-            Painting player = new Painting(new Player(5, 5));
+            Render player = new Render(new Player(5, 5));
             player.PaintingPlayer();
         }
     }
@@ -23,11 +23,11 @@ namespace workProperties
         }
     }
 
-    class Painting
+    class Render
     {
-        public Player _player;
+        private Player _player;
 
-        public Painting(Player player)
+        public Render(Player player)
         {
             _player = player;
         }
