@@ -6,8 +6,8 @@ namespace workProperties
     {
         static void Main(string[] args)
         {
-            Render player = new Render(new Player(5, 5));
-            player.PaintingPlayer();
+            Renderer player = new Renderer(new Player(5, 5));
+            player.RenderPlayer();
         }
     }
 
@@ -23,17 +23,17 @@ namespace workProperties
         }
     }
 
-    class Render
+    class Renderer
     {
         private Player _player;
 
-        public Render(Player player)
+        public Renderer(Player player)
         {
             _player = player;
         }
 
 
-        public void PaintingPlayer()
+        public void RenderPlayer()
         {
             Console.SetCursorPosition(_player.X, _player.Y);
             Console.WriteLine("Игрок");
