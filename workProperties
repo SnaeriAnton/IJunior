@@ -6,20 +6,20 @@ namespace workProperties
     {
         static void Main(string[] args)
         {
-            Renderer player = new Renderer(new Player(5, 5));
-            player.RenderPlayer();
+            Renderer renderer = new Renderer(new Player(5, 5));
+            renderer.RenderPlayer();
         }
     }
 
     class Player
     {
-        public int PlayerX { get; private set; }
-        public int PlayerY { get; private set; }
+        public int PositionX { get; private set; }
+        public int PositionY { get; private set; }
 
         public Player(int x, int y)
         {
-            PlayerX = x;
-            PlayerY = y;
+            PositionX = x;
+            PositionY = y;
         }
     }
 
@@ -35,7 +35,7 @@ namespace workProperties
 
         public void RenderPlayer()
         {
-            Console.SetCursorPosition(_player.PlayerX, _player.PlayerY);
+            Console.SetCursorPosition(_player.PositionX, _player.PositionY);
             Console.WriteLine("Игрок");
         }
     }
