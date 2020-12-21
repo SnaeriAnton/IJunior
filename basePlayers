@@ -15,9 +15,10 @@ namespace basePlayers
                 Console.WriteLine("Выберите действие: \n" +
                     "1.Показать список играков.\n" +
                     "2.Добавить нового игрока.\n" +
-                    "3.Забанить/разбанить игрока\n" +
-                    "4.Удалить игрока.\n" +
-                    "5.Выйти из базы.\n");
+                    "3.Забанить игрока\n" +
+                    "4.Разбанить игрока.\n" +
+                    "5.Удалить игрока.\n" +
+                    "6.Выйти из базы.\n");
                 
                 switch (ReadNumber())
                 {
@@ -28,14 +29,18 @@ namespace basePlayers
                         basePlayers.AddPlayer();
                         break;
                     case 3:
-                        Console.Write("Введите номер игрока которого хотите забанить или разбанить: ");
+                        Console.Write("Введите номер игрока которого хотите забанить: ");
                         basePlayers.BanPlayer();
                         break;
                     case 4:
+                        Console.Write("Введите номер игрока которого хотите разбанить: ");
+                        basePlayers.ReBanPlayer();
+                        break;
+                    case 5:
                         Console.Write("Введите номер игрока которого хотите удалить из базы: ");
                         basePlayers.RemovPlayer();
                         break;
-                    case 5:
+                    case 6:
                         openBase = false;
                         break;
                 }
@@ -67,8 +72,7 @@ namespace basePlayers
     }
     class Base
     {
-        private List<Player> _base = new List<Player>();
-
+        private List<Player> _players = new List<Player>();
 
         public void AddPlayer()
         {
@@ -77,25 +81,26 @@ namespace basePlayers
             string name = Console.ReadLine();
             Console.Write("Введите уровень игрока: ");
             bool userInput = int.TryParse(Console.ReadLine(), out lavel);
-            bool flag = true;
-            _base.Add(new Player(name, lavel, flag));
+            bool satusPlayer = true;
+            _players.Add(new Player(name, lavel, satusPlayer));
             Console.WriteLine("Новый игрок добавлен!");
         }
+
         public void ShowInfo()
         {
-            if (_base.Count == 0)
+            if (_players.Count == 0)
             {
                 Console.WriteLine("В базе нету играков!");
             }
             else
             {
-                for (int i = 0; i < _base.Count; i++)
+                for (int i = 0; i < _players.Count; i++)
                 {
-                    Player player = _base[i];
+                    Player player = _players[i];
                     Console.WriteLine($"Порядковый номер: {i + 1}\n" +
                         $"Ник игрока: {player.NamePlayer}\n" +
                         $"Уровень игрока: {player.LavelPlayer}");
-                    if (player.Flag == true)
+                    if (player.StatusPlayer == true)
                     {
                         Console.WriteLine($"Состояние игрока: Не забанен\n");
                     }
@@ -106,36 +111,54 @@ namespace basePlayers
                 }
             }
         }
+
         public void RemovPlayer()
         {
             int numberPlayer = ReadNumber();
             if (CheсkNumberPlayer(numberPlayer))
             {
-                Console.WriteLine($"Игрок {_base[numberPlayer - 1].NamePlayer} удален");
-                _base.RemoveAt(numberPlayer - 1);
+                Console.WriteLine($"Игрок {_players[numberPlayer - 1].NamePlayer} удален");
+                _players.RemoveAt(numberPlayer - 1);
             }
         }
+
         public void BanPlayer()
         {
             int numberPlayer = ReadNumber();
             if (CheсkNumberPlayer(numberPlayer))
             {
-                if (_base[numberPlayer - 1].Flag == true)
+                if (_players[numberPlayer - 1].StatusPlayer == false)
                 {
-                    _base[numberPlayer - 1].Ban(false);
-                    Console.WriteLine($"Игрок: {_base[numberPlayer - 1].NamePlayer}, забанен");
+                    Console.WriteLine("Игрок забанен");
                 }
                 else
                 {
-                    _base[numberPlayer - 1].Ban(true);
-                    Console.WriteLine($"Игрок: {_base[numberPlayer - 1].NamePlayer}, разбанен");
+                    _players[numberPlayer - 1].Ban(false);
+                    Console.WriteLine($"Игрок: {_players[numberPlayer - 1].NamePlayer}, забанен");
+                }
+            }
+        }
+
+        public void ReBanPlayer()
+        {
+            int numberPlayer = ReadNumber();
+            if (CheсkNumberPlayer(numberPlayer))
+            {
+                if (_players[numberPlayer - 1].StatusPlayer == true)
+                {
+                    Console.WriteLine("Игрок не забанен");
+                }
+                else
+                {
+                    _players[numberPlayer - 1].Ban(true);
+                    Console.WriteLine($"Игрок: {_players[numberPlayer - 1].NamePlayer}, разбанен");
                 }
             }
         }
 
         private bool CheсkNumberPlayer(int number)
         {
-            if (_base.Count < number || _base.Count > number)
+            if (_players.Count < number || 0 > number)
             {
                 Console.WriteLine("Игрока с таким номером нету!");
                 return false;
@@ -169,18 +192,18 @@ namespace basePlayers
     {
         public string NamePlayer { get; private set; }
         public int LavelPlayer { get; private set; }
-        public bool Flag { get; private set; }
+        public bool StatusPlayer { get; private set; }
 
-        public Player(string namePlayer, int lavelPlayer, bool flag)
+        public Player(string namePlayer, int lavelPlayer, bool statusPlayer)
         {
             NamePlayer = namePlayer;
             LavelPlayer = lavelPlayer;
-            Flag = flag;
+            StatusPlayer = statusPlayer;
         }
 
-        public void Ban(bool banFlag)
+        public void Ban(bool banStatus)
         {
-            Flag = banFlag;
+            StatusPlayer = banStatus;
         }
     }
 }
