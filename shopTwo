@@ -1,0 +1,181 @@
+using System;
+using System.Collections.Generic;
+
+namespace shop
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            bool isOpen = true;
+            string userInput = " ";
+            Seller shop = new Seller();
+            Console.Write("Сколько золота вы принесли из Данджа: ");
+            Player player = new Player(ReadInt());
+            while (isOpen)
+            {
+                Console.Write("Приветствую тебя путник.\n" +
+                    "1.Показать товар.\n" +
+                    "2.Купить товар.\n" +
+                    "3.Покинуть продовца.\n" +
+                    "Чего желаешь: ");
+                switch (ReadInt())
+                {
+                    case 1:
+                        shop.ShowProducts();
+                        break;
+                    case 2:
+                        Console.Write("\nВведите номер товара который хотите купить: ");
+                        shop.Sell(ReadInt(), player);
+                        break;
+                    case 3:
+                        isOpen = false;
+                        break;
+                    default:
+                        Console.WriteLine("\nНе верный выбор");
+                        break;
+                }
+                Console.WriteLine("\nХотите посмотреть свою сумку? Yes/No");
+                userInput = Console.ReadLine();
+                if (userInput == "Yes")
+                {
+                    player.ShowBag();
+                }
+                Console.ReadKey();
+                Console.Clear();
+            }
+        }
+
+        static public int ReadInt()
+        {
+            int userInput = 0;
+            bool result = false;
+            while (!result)
+            {
+                result = int.TryParse(Console.ReadLine(), out userInput);
+                if (!result)
+                {
+                    Console.WriteLine("Вы ввели не корректное значение попробуйте еще раз");
+                }
+            }
+            return userInput;
+        }
+    }
+
+    class Product
+    {
+        public string NameProduct { get; private set; }
+        public int Price { get; private set; }
+
+        public Product(string name, int price)
+        {
+            NameProduct = name;
+            Price = price;
+        }
+    }
+
+    class Player
+    {
+        private int _money;
+        public List<Product> Bag = new List<Product>();
+
+        public Player(int money)
+        {
+            _money = money;
+        }
+
+        public void ShowBag()
+        {
+            Console.WriteLine($"\nКолличестко денег: {_money}");
+            Console.WriteLine("У вас в сумке: ");
+            for (int i = 0; i < Bag.Count; i++)
+            {
+                Console.WriteLine($"{Bag[i].NameProduct}");
+            }
+        }
+        public void AddToBag(Product product)
+        {
+            Bag.Add(product);
+        }
+
+        public bool CheakMoney(Product product)
+        {
+            if (_money > product.Price)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void ToPay(Product product)
+        {
+            _money -= product.Price;
+        }
+    }
+
+    class Seller
+    {
+        private List<Product> _products = new List<Product>();
+
+        public Seller()
+        {
+            _products.Add(new Product("Кристал", 1000));
+            _products.Add(new Product("Зелье здоровья", 10));
+            _products.Add(new Product("Еда", 1));
+            _products.Add(new Product("Мечь", 200));
+            _products.Add(new Product("Шлем", 150));
+            _products.Add(new Product("Щит", 100));
+            _products.Add(new Product("Волшебный свиток", 500));
+            _products.Add(new Product("Карта сокровищ", 350));
+            _products.Add(new Product("Маунт", 490));
+            _products.Add(new Product("Cyberpunk 2077", 1999));
+        }
+
+        public void ShowProducts()
+        {
+            Console.WriteLine("\nТовар в лавке: ");
+            for (int i = 0; i < _products.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}).{_products[i].NameProduct}: {_products[i].Price} Золото.");
+            }
+        }
+
+        public void Sell(int number, Player palyer)
+        {
+            if (CheakList(number))
+            {
+                if (palyer.CheakMoney(_products[(number - 1)])) 
+                {
+                    palyer.ToPay(_products[number - 1]);
+                    palyer.AddToBag(_products[number]);
+                    _products.RemoveAt(number);
+                    Console.WriteLine("Товар преобртен.");
+                }
+                else
+                {
+                    Console.WriteLine("У вас недостаточно средств");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Такого товар нету.");
+            }
+            
+        }
+
+        private bool CheakList(int number)
+        {
+            if (_products.Count < number || 0 > number) 
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+    }
+}
