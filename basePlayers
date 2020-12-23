@@ -127,7 +127,7 @@ namespace basePlayers
             int numberPlayer = ReadNumber();
             if (CheсkNumberPlayer(numberPlayer))
             {
-                BanUnBan(false, _players[numberPlayer - 1]);
+                ChangeStatus(false, _players[numberPlayer - 1]);
             }
         }
 
@@ -136,12 +136,11 @@ namespace basePlayers
             int numberPlayer = ReadNumber();
             if (CheсkNumberPlayer(numberPlayer))
             {
-                BanUnBan(true, _players[numberPlayer - 1]);
+                ChangeStatus(true, _players[numberPlayer - 1]);
             }
         }
 
-
-        public void BanUnBan(bool banStatus, Player player)
+        public void ChangeStatus(bool banStatus, Player player)
         {
             if (player.Status == banStatus)
             {
@@ -173,8 +172,6 @@ namespace basePlayers
 
             }
         }
-
-
 
         private bool CheсkNumberPlayer(int number)
         {
