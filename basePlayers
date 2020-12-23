@@ -19,7 +19,7 @@ namespace basePlayers
                     "4.Разбанить игрока.\n" +
                     "5.Удалить игрока.\n" +
                     "6.Выйти из базы.\n");
-                
+
                 switch (ReadNumber())
                 {
                     case 1:
@@ -30,15 +30,15 @@ namespace basePlayers
                         break;
                     case 3:
                         Console.Write("Введите номер игрока которого хотите забанить: ");
-                        basePlayers.BanPlayer();
+                        basePlayers.Ban();
                         break;
                     case 4:
                         Console.Write("Введите номер игрока которого хотите разбанить: ");
-                        basePlayers.ReBanPlayer();
+                        basePlayers.UnBan();
                         break;
                     case 5:
                         Console.Write("Введите номер игрока которого хотите удалить из базы: ");
-                        basePlayers.RemovPlayer();
+                        basePlayers.RemovePlayer();
                         break;
                     case 6:
                         openBase = false;
@@ -98,9 +98,9 @@ namespace basePlayers
                 {
                     Player player = _players[i];
                     Console.WriteLine($"Порядковый номер: {i + 1}\n" +
-                        $"Ник игрока: {player.NamePlayer}\n" +
-                        $"Уровень игрока: {player.LavelPlayer}");
-                    if (player.StatusPlayer == true)
+                        $"Ник игрока: {player.Name}\n" +
+                        $"Уровень игрока: {player.Lavel}");
+                    if (player.Status == true)
                     {
                         Console.WriteLine($"Состояние игрока: Не забанен\n");
                     }
@@ -112,49 +112,69 @@ namespace basePlayers
             }
         }
 
-        public void RemovPlayer()
+        public void RemovePlayer()
         {
             int numberPlayer = ReadNumber();
             if (CheсkNumberPlayer(numberPlayer))
             {
-                Console.WriteLine($"Игрок {_players[numberPlayer - 1].NamePlayer} удален");
+                Console.WriteLine($"Игрок {_players[numberPlayer - 1].Name} удален");
                 _players.RemoveAt(numberPlayer - 1);
             }
         }
 
-        public void BanPlayer()
+        public void Ban()
         {
             int numberPlayer = ReadNumber();
             if (CheсkNumberPlayer(numberPlayer))
             {
-                if (_players[numberPlayer - 1].StatusPlayer == false)
-                {
-                    Console.WriteLine("Игрок забанен");
-                }
-                else
-                {
-                    _players[numberPlayer - 1].Ban(false);
-                    Console.WriteLine($"Игрок: {_players[numberPlayer - 1].NamePlayer}, забанен");
-                }
+                BanUnBan(false, _players[numberPlayer - 1]);
             }
         }
 
-        public void ReBanPlayer()
+        public void UnBan()
         {
             int numberPlayer = ReadNumber();
             if (CheсkNumberPlayer(numberPlayer))
             {
-                if (_players[numberPlayer - 1].StatusPlayer == true)
-                {
-                    Console.WriteLine("Игрок не забанен");
-                }
-                else
-                {
-                    _players[numberPlayer - 1].Ban(true);
-                    Console.WriteLine($"Игрок: {_players[numberPlayer - 1].NamePlayer}, разбанен");
-                }
+                BanUnBan(true, _players[numberPlayer - 1]);
             }
         }
+
+
+        public void BanUnBan(bool banStatus, Player player)
+        {
+            if (player.Status == banStatus)
+            {
+                if (banStatus == true)
+                {
+                    Console.WriteLine("Игрок не забанен");
+                } 
+                else
+                {
+                    Console.WriteLine("Игрок забанен");
+                }
+                
+            }
+            else
+            {
+                player.Ban(banStatus);
+                Console.Write($"Игрок: {player.Name}, ");
+                if (true)
+                {
+                    if (player.Status == true)
+                    {
+                        Console.WriteLine("разабанен\n");
+                    }
+                    else
+                    {
+                        Console.WriteLine("забанен\n");
+                    }
+                }
+
+            }
+        }
+
+
 
         private bool CheсkNumberPlayer(int number)
         {
@@ -190,20 +210,20 @@ namespace basePlayers
     }
     class Player
     {
-        public string NamePlayer { get; private set; }
-        public int LavelPlayer { get; private set; }
-        public bool StatusPlayer { get; private set; }
+        public string Name { get; private set; }
+        public int Lavel { get; private set; }
+        public bool Status { get; private set; }
 
-        public Player(string namePlayer, int lavelPlayer, bool statusPlayer)
+        public Player(string name, int lavel, bool status)
         {
-            NamePlayer = namePlayer;
-            LavelPlayer = lavelPlayer;
-            StatusPlayer = statusPlayer;
+            Name = name;
+            Lavel = lavel;
+            Status = status;
         }
 
         public void Ban(bool banStatus)
         {
-            StatusPlayer = banStatus;
+            Status = banStatus;
         }
     }
 }
