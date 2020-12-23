@@ -8,6 +8,7 @@ namespace shop
         static void Main(string[] args)
         {
             bool isOpen = true;
+            int numberProduct, price;
             string userInput = " ";
             Seller shop = new Seller();
             Console.Write("Сколько золота вы принесли из Данджа: ");
@@ -26,7 +27,25 @@ namespace shop
                         break;
                     case 2:
                         Console.Write("\nВведите номер товара который хотите купить: ");
-                        shop.Sell(ReadInt(), player);
+                        numberProduct = ReadInt() - 1;
+                        price = shop.PriceProduct(numberProduct);
+                        if (shop.CheakNumberProduct(numberProduct))
+                        {
+                            if (player.CheakMoney(price))
+                            {
+                                player.Pay(shop.Sell(numberProduct));
+                                shop.Remove(numberProduct);
+                                Console.WriteLine("Товар преобртен.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("У вас недостаточно средств");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Такого товар нету.");
+                        }
                         break;
                     case 3:
                         isOpen = false;
@@ -61,15 +80,14 @@ namespace shop
             return userInput;
         }
     }
-
     class Product
     {
-        public string NameProduct { get; private set; }
+        public string Name { get; private set; }
         public int Price { get; private set; }
 
         public Product(string name, int price)
         {
-            NameProduct = name;
+            Name = name;
             Price = price;
         }
     }
@@ -77,7 +95,7 @@ namespace shop
     class Player
     {
         private int _money;
-        public List<Product> Bag = new List<Product>();
+        private List<Product> Bag = new List<Product>();
 
         public Player(int money)
         {
@@ -90,17 +108,13 @@ namespace shop
             Console.WriteLine("У вас в сумке: ");
             for (int i = 0; i < Bag.Count; i++)
             {
-                Console.WriteLine($"{Bag[i].NameProduct}");
+                Console.WriteLine($"{Bag[i].Name}");
             }
         }
-        public void AddToBag(Product product)
-        {
-            Bag.Add(product);
-        }
 
-        public bool CheakMoney(Product product)
+        public bool CheakMoney(int price)
         {
-            if (_money > product.Price)
+            if (_money > price)
             {
                 return true;
             }
@@ -110,9 +124,10 @@ namespace shop
             }
         }
 
-        public void ToPay(Product product)
+        public void Pay(Product product)
         {
             _money -= product.Price;
+            Bag.Add(product);
         }
     }
 
@@ -139,37 +154,29 @@ namespace shop
             Console.WriteLine("\nТовар в лавке: ");
             for (int i = 0; i < _products.Count; i++)
             {
-                Console.WriteLine($"{i + 1}).{_products[i].NameProduct}: {_products[i].Price} Золото.");
+                Console.WriteLine($"{i + 1}).{_products[i].Name}: {_products[i].Price} Золото.");
             }
         }
 
-        public void Sell(int number, Player palyer)
+        public int PriceProduct(int number)
         {
-            if (CheakList(number))
-            {
-                if (palyer.CheakMoney(_products[(number - 1)])) 
-                {
-                    palyer.ToPay(_products[number - 1]);
-                    palyer.AddToBag(_products[number]);
-                    _products.RemoveAt(number);
-                    Console.WriteLine("Товар преобртен.");
-                }
-                else
-                {
-                    Console.WriteLine("У вас недостаточно средств");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Такого товар нету.");
-            }
-            
+            int price = _products[number].Price;
+            return price;
+        }
+        public Product Sell(int number)
+        {
+            return _products[number];
+        }
+        public void Remove(int number)
+        {
+            _products.RemoveAt(number);
         }
 
-        private bool CheakList(int number)
+        public bool CheakNumberProduct(int number)
         {
             if (_products.Count < number || 0 > number) 
             {
+                Console.WriteLine("Такого товар нету.");
                 return false;
             }
             else
