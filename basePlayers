@@ -1,70 +1,55 @@
 using System;
 using System.Collections.Generic;
 
-namespace shop
+namespace basePlayers
 {
     class Program
     {
         static void Main(string[] args)
         {
-            bool isOpen = true;
-            int numberProduct, price;
-            string userInput = " ";
-            Seller shop = new Seller();
-            Console.Write("Сколько золота вы принесли из Данджа: ");
-            Player player = new Player(ReadInt());
-            while (isOpen)
+            Base basePlayers = new Base();
+            bool openBase = true;
+
+            while (openBase)
             {
-                Console.Write("Приветствую тебя путник.\n" +
-                    "1.Показать товар.\n" +
-                    "2.Купить товар.\n" +
-                    "3.Покинуть продовца.\n" +
-                    "Чего желаешь: ");
-                switch (ReadInt())
+                Console.WriteLine("Выберите действие: \n" +
+                    "1.Показать список играков.\n" +
+                    "2.Добавить нового игрока.\n" +
+                    "3.Забанить игрока\n" +
+                    "4.Разбанить игрока.\n" +
+                    "5.Удалить игрока.\n" +
+                    "6.Выйти из базы.\n");
+
+                switch (ReadNumber())
                 {
                     case 1:
-                        shop.ShowProducts();
+                        basePlayers.ShowInfo();
                         break;
                     case 2:
-                        Console.Write("\nВведите номер товара который хотите купить: ");
-                        numberProduct = ReadInt() - 1;
-                        price = shop.ReturnPriceProduct(numberProduct);
-                        if (shop.CheakNumberProduct(numberProduct))
-                        {
-                            if (player.CheakMoney(price))
-                            {
-                                player.Pay(shop.Sell(numberProduct));
-                                Console.WriteLine("Товар преобртен.");
-                            }
-                            else
-                            {
-                                Console.WriteLine("У вас недостаточно средств");
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("Такого товар нету.");
-                        }
+                        basePlayers.AddPlayer();
                         break;
                     case 3:
-                        isOpen = false;
+                        Console.Write("Введите номер игрока которого хотите забанить: ");
+                        basePlayers.Ban();
                         break;
-                    default:
-                        Console.WriteLine("\nНе верный выбор");
+                    case 4:
+                        Console.Write("Введите номер игрока которого хотите разбанить: ");
+                        basePlayers.UnBan();
                         break;
-                }
-                Console.WriteLine("\nХотите посмотреть свою сумку? Yes/No");
-                userInput = Console.ReadLine();
-                if (userInput == "Yes")
-                {
-                    player.ShowBag();
+                    case 5:
+                        Console.Write("Введите номер игрока которого хотите удалить из базы: ");
+                        basePlayers.RemovePlayer();
+                        break;
+                    case 6:
+                        openBase = false;
+                        break;
                 }
                 Console.ReadKey();
                 Console.Clear();
             }
-        }
 
-        static public int ReadInt()
+        }
+        static int ReadNumber()
         {
             int userInput = 0;
             bool result = false;
@@ -73,114 +58,173 @@ namespace shop
                 result = int.TryParse(Console.ReadLine(), out userInput);
                 if (!result)
                 {
-                    Console.WriteLine("Вы ввели не корректное значение попробуйте еще раз");
+                    Console.WriteLine("Вы ввели не верное значение попробуйте еще раз.");
+                    continue;
+                }
+                if (userInput <= 0 || userInput >= 6)
+                {
+                    Console.WriteLine("Таких пунктов меню нет попробуйте езе раз.");
+                    result = false;
                 }
             }
             return userInput;
         }
     }
-
-    class Product
+    class Base
     {
-        public string Name { get; private set; }
-        public int Price { get; private set; }
+        private List<Player> _players = new List<Player>();
 
-        public Product(string name, int price)
+        public void AddPlayer()
         {
-            Name = name;
-            Price = price;
+            int lavel = 0;
+            Console.Write("Введите имя игрока: ");
+            string name = Console.ReadLine();
+            Console.Write("Введите уровень игрока: ");
+            bool userInput = int.TryParse(Console.ReadLine(), out lavel);
+            bool satusPlayer = true;
+            _players.Add(new Player(name, lavel, satusPlayer));
+            Console.WriteLine("Новый игрок добавлен!");
+        }
+
+        public void ShowInfo()
+        {
+            if (_players.Count == 0)
+            {
+                Console.WriteLine("В базе нету играков!");
+            }
+            else
+            {
+                for (int i = 0; i < _players.Count; i++)
+                {
+                    Player player = _players[i];
+                    Console.WriteLine($"Порядковый номер: {i + 1}\n" +
+                        $"Ник игрока: {player.Name}\n" +
+                        $"Уровень игрока: {player.Lavel}");
+                    if (player.IsBaned == true)
+                    {
+                        Console.WriteLine($"Состояние игрока: Не забанен\n");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Состояние игрока: Забанен\n");
+                    }
+                }
+            }
+        }
+
+        public void RemovePlayer()
+        {
+            int numberPlayer = ReadNumber();
+            if (CheсkNumberPlayer(numberPlayer))
+            {
+                Console.WriteLine($"Игрок {_players[numberPlayer - 1].Name} удален");
+                _players.RemoveAt(numberPlayer - 1);
+            }
+        }
+
+        public void Ban()
+        {
+            int numberPlayer = ReadNumber();
+            if (CheсkNumberPlayer(numberPlayer))
+            {
+                _players[numberPlayer - 1].Ban();
+            }
+        }
+
+        public void UnBan()
+        {
+            int numberPlayer = ReadNumber();
+            if (CheсkNumberPlayer(numberPlayer))
+            {
+                _players[numberPlayer - 1].UnBan();
+            }
+        }
+
+        private bool CheсkNumberPlayer(int number)
+        {
+            if (_players.Count < number || 0 > number)
+            {
+                Console.WriteLine("Игрока с таким номером нету!");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private int ReadNumber()
+        {
+            int userInput = 0;
+            bool result = false;
+            while (!result)
+            {
+                result = int.TryParse(Console.ReadLine(), out userInput);
+                if (!result)
+                {
+                    Console.WriteLine("Вы ввели не верное значение попробуйте еще раз.");
+                }
+                else
+                {
+                    result = true;
+                }
+            }
+            return userInput;
         }
     }
-
     class Player
     {
-        private int _money;
-        private List<Product> _bag = new List<Product>();
+        public string Name { get; private set; }
+        public int Lavel { get; private set; }
+        public bool IsBaned { get; private set; }
 
-        public Player(int money)
+        public Player(string name, int lavel, bool isBaned)
         {
-            _money = money;
+            Name = name;
+            Lavel = lavel;
+            IsBaned = isBaned;
         }
 
-        public void ShowBag()
+        public void Ban()
         {
-            Console.WriteLine($"\nКолличестко денег: {_money}");
-            Console.WriteLine("У вас в сумке: ");
-            for (int i = 0; i < _bag.Count; i++)
+            ChangeStatus(false);
+        }
+
+        public void UnBan()
+        {
+            ChangeStatus(true);
+        }
+
+        private void ChangeStatus(bool banStatus)
+        {
+            if (IsBaned == banStatus)
             {
-                Console.WriteLine($"{_bag[i].Name}");
-            }
-        }
+                if (banStatus == true)
+                {
+                    Console.WriteLine("Игрок не забанен");
+                }
+                else
+                {
+                    Console.WriteLine("Игрок забанен");
+                }
 
-        public bool CheakMoney(int price)
-        {
-            if (_money > price)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public void Pay(Product product)
-        {
-            _money -= product.Price;
-            _bag.Add(product);
-        }
-    }
-
-    class Seller
-    {
-        private List<Product> _products = new List<Product>();
-
-        public Seller()
-        {
-            _products.Add(new Product("Кристал", 1000));
-            _products.Add(new Product("Зелье здоровья", 10));
-            _products.Add(new Product("Еда", 1));
-            _products.Add(new Product("Мечь", 200));
-            _products.Add(new Product("Шлем", 150));
-            _products.Add(new Product("Щит", 100));
-            _products.Add(new Product("Волшебный свиток", 500));
-            _products.Add(new Product("Карта сокровищ", 350));
-            _products.Add(new Product("Маунт", 490));
-            _products.Add(new Product("Cyberpunk 2077", 1999));
-        }
-
-        public void ShowProducts()
-        {
-            Console.WriteLine("\nТовар в лавке: ");
-            for (int i = 0; i < _products.Count; i++)
-            {
-                Console.WriteLine($"{i + 1}).{_products[i].Name}: {_products[i].Price} Золото.");
-            }
-        }
-
-        public int ReturnPriceProduct(int number)
-        {
-            int price = _products[number].Price;
-            return price;
-        }
-
-        public Product Sell(int number)
-        {
-            Product product = _products[number];
-            _products.RemoveAt(number);
-            return product;
-        }
-
-        public bool CheakNumberProduct(int number)
-        {
-            if (_products.Count < number || 0 > number) 
-            {
-                Console.WriteLine("Такого товар нету.");
-                return false;
             }
             else
             {
-                return true;
+                IsBaned = banStatus;
+                Console.Write($"Игрок: {Name}, ");
+                if (true)
+                {
+                    if (IsBaned == true)
+                    {
+                        Console.WriteLine("разабанен\n");
+                    }
+                    else
+                    {
+                        Console.WriteLine("забанен\n");
+                    }
+                }
+
             }
         }
     }
