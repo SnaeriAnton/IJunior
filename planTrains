@@ -1,0 +1,170 @@
+using System;
+using System.Collections.Generic;
+
+namespace planTrains
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            RailwayStation timetableBoard = new RailwayStation();
+            bool railwayStationIsOpen = false;
+            string userInput = "";
+
+            while (!railwayStationIsOpen)
+            {
+                Console.WriteLine("Рассписание поездов:");
+                timetableBoard.ShowInfo();
+                Console.WriteLine();
+                Console.Write("Закрыть станциб введите Yes или No: ");
+                userInput = Console.ReadLine();
+                if (userInput == "Yes")
+                {
+                    railwayStationIsOpen = true;
+                    break;
+                }
+                Console.SetCursorPosition(0, timetableBoard.ReturnTimeravleCount() + 6);
+                timetableBoard.AddTripPlan();
+                Console.Clear();
+            }
+        }
+    }
+
+    class Path
+    {
+        public string Out { get; private set; }
+        public string In { get; private set; }
+        public Path(string outPath, string inPath)
+        {
+            Out = outPath;
+            In = inPath;
+        }
+    }
+
+    class Ticket
+    {
+        public int Passengers { get; private set; }
+        public Ticket()
+        {
+            Random random = new Random();
+            Passengers = random.Next(0, 300);
+        }
+    }
+
+    class Train
+    {
+        public int TicketBuyed { get; private set; }
+        private List<int> _wagons = new List<int>();
+        public bool Status { get; private set; }
+
+        public Train(int ticketsBuy, int preperationTrain)
+        {
+            Ticket tickets = new Ticket();
+            Random random = new Random();
+            int valueTickets = tickets.Passengers * preperationTrain;
+            int sizeWagon;
+            while (valueTickets > 0)
+            {
+                sizeWagon = random.Next(10, 60);
+                valueTickets -= sizeWagon;
+                _wagons.Add(sizeWagon);
+            }
+            TicketBuyed = tickets.Passengers * ticketsBuy;
+            if (ticketsBuy == 0 || preperationTrain == 0)
+            {
+                Status = false;
+            }
+            else
+            {
+                Status = true;
+            }
+        }
+
+        public int ReturnSizeTrzin()
+        {
+            return _wagons.Count;
+        }
+    }
+
+    class RailwayStation
+    {
+        private static int numberTrain = 8090;
+        private Dictionary<Path, Train> _timerable = new Dictionary<Path, Train>();
+        public void AddTripPlan()
+        {
+            string outPath, inPath;
+            int ticketsSell, preperationTrain;
+            Console.Write("Откуда отбывает поезд: ");
+            outPath = Console.ReadLine();
+            Console.Write("Куда прибывает поезд: ");
+            inPath = Console.ReadLine();
+            Console.WriteLine("Начать продажу билетов?");
+            ticketsSell = CheakTrain();
+            if (ticketsSell == 0)
+            {
+                preperationTrain = 0;
+            } else
+            {
+                Console.WriteLine("Сформировать поезд?");
+                preperationTrain = CheakTrain();
+            }
+            _timerable.Add(new Path(outPath, inPath), new Train(ticketsSell, preperationTrain));
+        }
+
+        private int CheakTrain()
+        {
+            bool exit = false;
+            string userInput = "";
+            int result = 0;
+            while (!exit)
+            {
+                Console.Write("Введите Yes или No: ");
+                userInput = Console.ReadLine();
+                if (userInput == "Yes")
+                {
+                    exit = true;
+                    result = 1;
+                }
+                else if (userInput == "No")
+                {
+                    exit = true;
+                    result = 0;
+                }
+                else
+                {
+                    Console.WriteLine("Вы вели не корректное значениею Попробуйте еще раз.");
+                }
+            }
+            return result;
+        }
+
+        public void ShowInfo()
+        {
+            
+            if (_timerable.Count == 0)
+            {
+                Console.WriteLine("Рассписания нету");
+            }
+            else
+            {
+                foreach (var timerable in _timerable)
+                {
+                    Console.Write($"№ поезда {numberTrain + 1}, {timerable.Key.Out}-{timerable.Key.In}. Продано билетов: {timerable.Value.TicketBuyed}. Длинна поезда: {timerable.Value.ReturnSizeTrzin()}. Статус: ");
+                    if (timerable.Value.Status == true)
+                    {
+                        Console.WriteLine("\tОтправлен");
+                    }
+                    else
+                    {
+                        Console.WriteLine("\tОтменен");
+                    }
+                }
+            }
+        }
+
+        public int ReturnTimeravleCount()
+        {
+            return _timerable.Count;
+        }
+    }
+}
