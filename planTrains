@@ -16,7 +16,7 @@ namespace planTrains
                 Console.WriteLine("Рассписание поездов:");
                 timetableBoard.ShowInfo();
                 Console.WriteLine();
-                Console.Write("Закрыть станциб введите Yes или No: ");
+                Console.Write("Закрыть станцию введите Yes: ");
                 userInput = Console.ReadLine();
                 if (userInput == "Yes")
                 {
@@ -53,15 +53,17 @@ namespace planTrains
 
     class Train
     {
+        public int _numberTrain;
         public int TicketBuyed { get; private set; }
         private List<int> _wagons = new List<int>();
         public bool Status { get; private set; }
 
-        public Train(int ticketsBuy, int preperationTrain)
+        public Train(bool ticketsBuy, bool preperationTrain, int numberTrain)
         {
+            _numberTrain = numberTrain;
             Ticket tickets = new Ticket();
             Random random = new Random();
-            int valueTickets = tickets.Passengers * preperationTrain;
+            int valueTickets = tickets.Passengers * Convert.ToInt32(preperationTrain);
             int sizeWagon;
             while (valueTickets > 0)
             {
@@ -69,15 +71,8 @@ namespace planTrains
                 valueTickets -= sizeWagon;
                 _wagons.Add(sizeWagon);
             }
-            TicketBuyed = tickets.Passengers * ticketsBuy;
-            if (ticketsBuy == 0 || preperationTrain == 0)
-            {
-                Status = false;
-            }
-            else
-            {
-                Status = true;
-            }
+            TicketBuyed = tickets.Passengers * Convert.ToInt32(ticketsBuy);
+            Status = (ticketsBuy == false || preperationTrain == false ? false : true);
         }
 
         public int ReturnSizeTrzin()
@@ -88,34 +83,37 @@ namespace planTrains
 
     class RailwayStation
     {
-        private static int numberTrain = 8090;
+        private static int _numberTrains = 8090;
+        private int _numberTrain;
         private Dictionary<Path, Train> _timerable = new Dictionary<Path, Train>();
+
         public void AddTripPlan()
         {
+            _numberTrain = ++_numberTrains;
             string outPath, inPath;
-            int ticketsSell, preperationTrain;
+            bool ticketsSell, preperationTrain;
             Console.Write("Откуда отбывает поезд: ");
             outPath = Console.ReadLine();
             Console.Write("Куда прибывает поезд: ");
             inPath = Console.ReadLine();
             Console.WriteLine("Начать продажу билетов?");
             ticketsSell = CheakTrain();
-            if (ticketsSell == 0)
+            if (ticketsSell == false)
             {
-                preperationTrain = 0;
+                preperationTrain = false;
             } else
             {
                 Console.WriteLine("Сформировать поезд?");
                 preperationTrain = CheakTrain();
             }
-            _timerable.Add(new Path(outPath, inPath), new Train(ticketsSell, preperationTrain));
+            _timerable.Add(new Path(outPath, inPath), new Train(ticketsSell, preperationTrain, _numberTrain));
         }
 
-        private int CheakTrain()
+        private bool CheakTrain()
         {
             bool exit = false;
             string userInput = "";
-            int result = 0;
+            bool result = false;
             while (!exit)
             {
                 Console.Write("Введите Yes или No: ");
@@ -123,12 +121,12 @@ namespace planTrains
                 if (userInput == "Yes")
                 {
                     exit = true;
-                    result = 1;
+                    result = true;
                 }
                 else if (userInput == "No")
                 {
                     exit = true;
-                    result = 0;
+                    result = false;
                 }
                 else
                 {
@@ -140,7 +138,6 @@ namespace planTrains
 
         public void ShowInfo()
         {
-            
             if (_timerable.Count == 0)
             {
                 Console.WriteLine("Рассписания нету");
@@ -149,15 +146,9 @@ namespace planTrains
             {
                 foreach (var timerable in _timerable)
                 {
-                    Console.Write($"№ поезда {numberTrain + 1}, {timerable.Key.Out}-{timerable.Key.In}. Продано билетов: {timerable.Value.TicketBuyed}. Длинна поезда: {timerable.Value.ReturnSizeTrzin()}. Статус: ");
-                    if (timerable.Value.Status == true)
-                    {
-                        Console.WriteLine("\tОтправлен");
-                    }
-                    else
-                    {
-                        Console.WriteLine("\tОтменен");
-                    }
+                    Console.Write($"№ поезда {timerable.Value._numberTrain}, {timerable.Key.Out}-{timerable.Key.In}. Продано билетов: {timerable.Value.TicketBuyed}. Длинна поезда: {timerable.Value.ReturnSizeTrzin()}. Статус: ");
+                    string status = (timerable.Value.Status == true ? "\tОтправлен" : "\tОтменен");
+                    Console.WriteLine(status);
                 }
             }
         }
