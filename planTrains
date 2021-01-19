@@ -110,6 +110,30 @@ namespace planTrains
             }
             _timerable.Add(new Path(outPath, inPath), new Train(ticketsSell, preperationTrain, _numberTrain));
         }
+        public void ShowInfo()
+        {
+            if (_timerable.Count == 0)
+            {
+                Console.WriteLine("Рассписания нету");
+            }
+            else
+            {
+                foreach (var timerable in _timerable)
+                {
+                    Console.Write($"№ поезда {timerable.Value._numberTrain}, " +
+                        $"{timerable.Key.Out}-{timerable.Key.In}. " +
+                        $"Продано билетов: {timerable.Value.TicketBuyed}. " +
+                        $"Длинна поезда: {timerable.Value.ReturnCountWagons()}. Статус: ");
+                    string status = (timerable.Value.Status == true ? "\tОтправлен" : "\tОтменен");
+                    Console.WriteLine(status);
+                }
+            }
+        }
+
+        public int ReturnTimeravleCount()
+        {
+            return _timerable.Count;
+        }
 
         private bool CheakTrain()
         {
@@ -136,31 +160,6 @@ namespace planTrains
                 }
             }
             return result;
-        }
-
-        public void ShowInfo()
-        {
-            if (_timerable.Count == 0)
-            {
-                Console.WriteLine("Рассписания нету");
-            }
-            else
-            {
-                foreach (var timerable in _timerable)
-                {
-                    Console.Write($"№ поезда {timerable.Value._numberTrain}, " +
-                        $"{timerable.Key.Out}-{timerable.Key.In}. " +
-                        $"Продано билетов: {timerable.Value.TicketBuyed}. " +
-                        $"Длинна поезда: {timerable.Value.ReturnCountWagons()}. Статус: ");
-                    string status = (timerable.Value.Status == true ? "\tОтправлен" : "\tОтменен");
-                    Console.WriteLine(status);
-                }
-            }
-        }
-
-        public int ReturnTimeravleCount()
-        {
-            return _timerable.Count;
         }
     }
 }
