@@ -58,11 +58,11 @@ namespace planTrains
         private List<int> _wagons = new List<int>();
         public int TicketBuyed { get; private set; }
         public bool Status { get; private set; }
-        public int Number { get; private set; }
+        public int SerialNumber { get; private set; }
 
-        public Train(bool ticketsBuy, bool preperationTrain, int numberTrain)
+        public Train(bool ticketsBuy, bool preperationTrain, int serialNumber)
         {
-            Number = numberTrain;
+            SerialNumber = serialNumber;
             Cashier cashier = new Cashier();
             Random random = new Random();
             int valueTickets = cashier.Passengers * Convert.ToInt32(preperationTrain);
@@ -85,13 +85,13 @@ namespace planTrains
 
     class RailwayStation
     {
-        private static int _numberTrains = 8090;
-        private int _numberTrain;
+        private static int _serialNumbers = 8090;
+        private int _serialNumber;
         private Dictionary<Path, Train> _timetable = new Dictionary<Path, Train>();
 
         public void AddTripPlan()
         {
-            _numberTrain = ++_numberTrains;
+            _serialNumber = ++_serialNumbers;
             string outPath, inPath;
             bool ticketsSell, preperationTrain;
             Console.Write("Откуда отбывает поезд: ");
@@ -108,7 +108,7 @@ namespace planTrains
                 Console.WriteLine("Сформировать поезд?");
                 preperationTrain = CheakTrain();
             }
-            _timetable.Add(new Path(outPath, inPath), new Train(ticketsSell, preperationTrain, _numberTrain));
+            _timetable.Add(new Path(outPath, inPath), new Train(ticketsSell, preperationTrain, _serialNumber));
         }
         public void ShowInfo()
         {
@@ -120,7 +120,7 @@ namespace planTrains
             {
                 foreach (var timetable in _timetable)
                 {
-                    Console.Write($"№ поезда {timetable.Value.Number}, " +
+                    Console.Write($"№ поезда {timetable.Value.SerialNumber}, " +
                         $"{timetable.Key.Out}-{timetable.Key.In}. " +
                         $"Продано билетов: {timetable.Value.TicketBuyed}. " +
                         $"Длинна поезда: {timetable.Value.ReturnCountWagons()}. Статус: ");
