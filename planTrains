@@ -23,7 +23,7 @@ namespace planTrains
                     railwayStationIsOpen = false;
                     break;
                 }
-                Console.SetCursorPosition(0, timetableBoard.ReturnTimeravleCount() + 6);
+                Console.SetCursorPosition(0, timetableBoard.GetTimeravleCount() + 6);
                 timetableBoard.AddTripPlan();
                 Console.Clear();
             }
@@ -130,7 +130,7 @@ namespace planTrains
             }
         }
 
-        public int ReturnTimeravleCount()
+        public int GetTimeravleCount()
         {
             return _timetable.Count;
         }
