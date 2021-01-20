@@ -8,10 +8,10 @@ namespace planTrains
         static void Main(string[] args)
         {
             RailwayStation timetableBoard = new RailwayStation();
-            bool railwayStationIsOpen = false;
+            bool railwayStationIsOpen = true;
             string userInput = "";
 
-            while (!railwayStationIsOpen)
+            while (railwayStationIsOpen == true)
             {
                 Console.WriteLine("Рассписание поездов:");
                 timetableBoard.ShowInfo();
@@ -20,7 +20,7 @@ namespace planTrains
                 userInput = Console.ReadLine();
                 if (userInput == "Yes")
                 {
-                    railwayStationIsOpen = true;
+                    railwayStationIsOpen = false;
                     break;
                 }
                 Console.SetCursorPosition(0, timetableBoard.ReturnTimeravleCount() + 6);
@@ -58,14 +58,14 @@ namespace planTrains
         private List<int> _wagons = new List<int>();
         public int TicketBuyed { get; private set; }
         public bool Status { get; private set; }
-        public int _numberTrain;
+        public int Number { get; private set; }
 
         public Train(bool ticketsBuy, bool preperationTrain, int numberTrain)
         {
-            _numberTrain = numberTrain;
-            Cashier tickets = new Cashier();
+            Number = numberTrain;
+            Cashier cashier = new Cashier();
             Random random = new Random();
-            int valueTickets = tickets.Passengers * Convert.ToInt32(preperationTrain);
+            int valueTickets = cashier.Passengers * Convert.ToInt32(preperationTrain);
             int sizeWagon;
             while (valueTickets > 0)
             {
@@ -73,7 +73,7 @@ namespace planTrains
                 valueTickets -= sizeWagon;
                 _wagons.Add(sizeWagon);
             }
-            TicketBuyed = tickets.Passengers * Convert.ToInt32(ticketsBuy);
+            TicketBuyed = cashier.Passengers * Convert.ToInt32(ticketsBuy);
             Status = (ticketsBuy == false || preperationTrain == false ? false : true);
         }
 
@@ -87,7 +87,7 @@ namespace planTrains
     {
         private static int _numberTrains = 8090;
         private int _numberTrain;
-        private Dictionary<Path, Train> _timerable = new Dictionary<Path, Train>();
+        private Dictionary<Path, Train> _timetable = new Dictionary<Path, Train>();
 
         public void AddTripPlan()
         {
@@ -108,23 +108,23 @@ namespace planTrains
                 Console.WriteLine("Сформировать поезд?");
                 preperationTrain = CheakTrain();
             }
-            _timerable.Add(new Path(outPath, inPath), new Train(ticketsSell, preperationTrain, _numberTrain));
+            _timetable.Add(new Path(outPath, inPath), new Train(ticketsSell, preperationTrain, _numberTrain));
         }
         public void ShowInfo()
         {
-            if (_timerable.Count == 0)
+            if (_timetable.Count == 0)
             {
                 Console.WriteLine("Рассписания нету");
             }
             else
             {
-                foreach (var timerable in _timerable)
+                foreach (var timetable in _timetable)
                 {
-                    Console.Write($"№ поезда {timerable.Value._numberTrain}, " +
-                        $"{timerable.Key.Out}-{timerable.Key.In}. " +
-                        $"Продано билетов: {timerable.Value.TicketBuyed}. " +
-                        $"Длинна поезда: {timerable.Value.ReturnCountWagons()}. Статус: ");
-                    string status = (timerable.Value.Status == true ? "\tОтправлен" : "\tОтменен");
+                    Console.Write($"№ поезда {timetable.Value.Number}, " +
+                        $"{timetable.Key.Out}-{timetable.Key.In}. " +
+                        $"Продано билетов: {timetable.Value.TicketBuyed}. " +
+                        $"Длинна поезда: {timetable.Value.ReturnCountWagons()}. Статус: ");
+                    string status = (timetable.Value.Status == true ? "\tОтправлен" : "\tОтменен");
                     Console.WriteLine(status);
                 }
             }
@@ -132,7 +132,7 @@ namespace planTrains
 
         public int ReturnTimeravleCount()
         {
-            return _timerable.Count;
+            return _timetable.Count;
         }
 
         private bool CheakTrain()
