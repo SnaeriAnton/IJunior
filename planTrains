@@ -77,7 +77,7 @@ namespace planTrains
             Status = (ticketsBuy == false || preperationTrain == false ? false : true);
         }
 
-        public int ReturnCountWagons()
+        public int GetCountWagons()
         {
             return _wagons.Count;
         }
@@ -123,7 +123,7 @@ namespace planTrains
                     Console.Write($"№ поезда {timetable.Value.SerialNumber}, " +
                         $"{timetable.Key.Out}-{timetable.Key.In}. " +
                         $"Продано билетов: {timetable.Value.TicketBuyed}. " +
-                        $"Длинна поезда: {timetable.Value.ReturnCountWagons()}. Статус: ");
+                        $"Длинна поезда: {timetable.Value.GetCountWagons()}. Статус: ");
                     string status = (timetable.Value.Status == true ? "\tОтправлен" : "\tОтменен");
                     Console.WriteLine(status);
                 }
