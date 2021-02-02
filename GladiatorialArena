@@ -16,7 +16,7 @@ namespace GladiatorialArena
     class Arena
     {
         private List<Warrior> _warriors = new List<Warrior>();
-        private bool _isOpenArena;
+        private bool _isOpen;
         
         public Arena(bool isOpenArena)
         {
@@ -25,7 +25,7 @@ namespace GladiatorialArena
             _warriors.Add(new Knight(100, 8, 50));
             _warriors.Add(new Archer(100, 12, 15));
             _warriors.Add(new Witcher(100, 10, 30));
-            _isOpenArena = isOpenArena;
+            _isOpen = isOpenArena;
         }
 
         public void ChoiseGladiatorials(Random random)
@@ -37,9 +37,9 @@ namespace GladiatorialArena
             if (_warriors.Count == 0)
             {
                 Console.WriteLine("В темнице нету войнов.");
-                _isOpenArena = false;
+                _isOpen = false;
             }
-            while (_isOpenArena == true)
+            while (_isOpen == true)
             {
                 for (int i = 0; i < _warriors.Count; i++)
                 {
@@ -54,7 +54,7 @@ namespace GladiatorialArena
                 userInput = Console.ReadLine();
                 if (userInput == "yes")
                 {
-                    _isOpenArena = false;
+                    _isOpen = false;
                 }
             }
         }
@@ -62,9 +62,9 @@ namespace GladiatorialArena
         private int GetIndex(int countWarriors, int warriorCheck = 0)
         {
             int userInput = 0;
-            bool checkResultConvert = true;
+            bool resultTryConvert = true;
 
-            while (checkResultConvert)
+            while (resultTryConvert == true)
             {
                 bool resultConvert = int.TryParse(Console.ReadLine(), out userInput);
                 if (userInput <= 0 || userInput > countWarriors)
@@ -77,8 +77,8 @@ namespace GladiatorialArena
                     Console.WriteLine("Этот боец уже выбран. Выберите другова.");
                     continue;
                 }
-                checkResultConvert = resultConvert ? false : true;
-                if (checkResultConvert)
+                resultTryConvert = resultConvert ? false : true;
+                if (resultTryConvert)
                     Console.WriteLine("Вы ввели не коректные данные. Попробуйте еще раз.");
             }
             return userInput;
@@ -99,8 +99,8 @@ namespace GladiatorialArena
                 RestorationOfAbilities(twoWarrior);
                 warriorOneAction = ChoiseOfAction(random);
                 warriorTwoAction = ChoiseOfAction(random);
-                BattleCourse(oneWarrior, twoWarrior, ref warriorOneAction, warriorTwoAction, classNameWarriorOne, ref countStunning, random);
-                BattleCourse(twoWarrior, oneWarrior, ref warriorTwoAction, warriorOneAction, classNameWarriorTwo, ref countStunning, random);
+                MoveBattleCourse(oneWarrior, twoWarrior, ref warriorOneAction, warriorTwoAction, classNameWarriorOne, ref countStunning, random);
+                MoveBattleCourse(twoWarrior, oneWarrior, ref warriorTwoAction, warriorOneAction, classNameWarriorTwo, ref countStunning, random);
                 oneWarrior.ShowInfo();
                 twoWarrior.ShowInfo();
                 if (countStunning > 0)
@@ -156,7 +156,7 @@ namespace GladiatorialArena
             }
         }
 
-        private void BattleCourse(Warrior choiceWarrior, Warrior enemyWarrior, ref int choiceWarriorAction, int enemyWarriorAction, string classNameWarrior, ref int countStunning, Random random)
+        private void MoveBattleCourse(Warrior choiceWarrior, Warrior enemyWarrior, ref int choiceWarriorAction, int enemyWarriorAction, string classNameWarrior, ref int countStunning, Random random)
         {
             if (choiceWarrior.Status)
             {
@@ -181,15 +181,15 @@ namespace GladiatorialArena
             switch (choiceWarrior)
             {
                 case Barbarian barbarian:
-                    action = choiceWarriorAction == 2 ? barbarian.Swipe() : barbarian.Damage * moveWarriors;
+                    action = choiceWarriorAction == 2 ? barbarian.AttackSwipe() : barbarian.Damage * moveWarriors;
                     AttacWarrior(action, enemyWarrior);
                     break;
                 case Warloсk warlock:
-                    action = choiceWarriorAction == 2 ? warlock.BallOfDarkness() * enemyWarriorAction : warlock.Damage * moveWarriors;
+                    action = choiceWarriorAction == 2 ? warlock.AttackBallOfDarkness() * enemyWarriorAction : warlock.Damage * moveWarriors;
                     AttacWarrior(action, enemyWarrior);
                     break;
                 case Knight knight:
-                    action = choiceWarriorAction == 2 ? knight.CounterAttack() * enemyWarriorAction : knight.Damage * moveWarriors;
+                    action = choiceWarriorAction == 2 ? knight.AttackCounter() * enemyWarriorAction : knight.Damage * moveWarriors;
                     AttacWarrior(action, enemyWarrior);
                     break;
                 case Archer archer:
@@ -263,7 +263,7 @@ namespace GladiatorialArena
             Status = true;
         }
 
-        public float Swipe()
+        public float AttackSwipe()
         {
             return Damage * 2;
         }
@@ -282,7 +282,7 @@ namespace GladiatorialArena
             Status = true;
         }
 
-        public float BallOfDarkness()
+        public float AttackBallOfDarkness()
         {
             if (_mana < 50)
             {
@@ -322,7 +322,7 @@ namespace GladiatorialArena
             _healthSave = Health;
         }
 
-        public float CounterAttack()
+        public float AttackCounter()
         {
             Health = _healthSave;
             return Damage * 2;
@@ -342,19 +342,20 @@ namespace GladiatorialArena
 
         public float ShotArrows(Warrior enemyWarrior, ref int countStunning, int arrows)
         {
-            ArrowChangeStatus(enemyWarrior, ref countStunning);
+            ChangeArrowStatus(enemyWarrior, ref countStunning);
             return Damage * arrows;
         }
 
-        private void ArrowChangeStatus(Warrior enemyWarrior, ref int countStunning)
+        private void ChangeArrowStatus(Warrior enemyWarrior, ref int countStunning)
         {
             bool statusChange = enemyWarrior.Status == true ? false : true;
+            int moves = 3;
             enemyWarrior.ChengeStatus(statusChange);
             if (enemyWarrior.Status == false)
             {
-                countStunning += 3;
+                countStunning += moves;
             }
-            Console.WriteLine($"{enemyWarrior.ClassName} оглушен на 3 хода");
+            Console.WriteLine($"{enemyWarrior.ClassName} оглушен на {moves} хода");
         }
     }
 
@@ -376,21 +377,24 @@ namespace GladiatorialArena
         public float ChoicePotion(int numberPotion)
         {
             int rollbackMove = 5;
+            int armorPoints = 15;
+            int healthPoints = 5;
+            int damagePoints = 2;
             if (CountPotions <= 0)
             {
                 switch (numberPotion)
                 {
                     case 1:
                         DrinkPotionHealth();
-                        Console.WriteLine($"Зелье действует {rollbackMove + 1} ходов. За каждый ход востанавливает 5 едениц здоровья.");
+                        Console.WriteLine($"Зелье действует {rollbackMove + 1} ходов. За каждый ход востанавливает {healthPoints} едениц здоровья.");
                         break;
                     case 2:
                         DrinkPotionDamage();
-                        Console.WriteLine($"Зелье действует {rollbackMove + 1} ходов. Каждый ход атака увеличиваеться на 2.");
+                        Console.WriteLine($"Зелье действует {rollbackMove + 1} ходов. Каждый ход атака увеличиваеться на {damagePoints}.");
                         break;
                     case 3:
                         DrinkPotionArmor();
-                        Console.WriteLine("Зелье добовляет 15 едениц защите.");
+                        Console.WriteLine($"Зелье добовляет {healthPoints} едениц защите.");
                         break;
                     default:
                         Console.WriteLine("Зелье не применяеться.");
