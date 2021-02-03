@@ -9,7 +9,7 @@ namespace GladiatorialArena
         {
             Random random = new Random();
             Arena arena = new Arena(true);
-            arena.ChoiseGladiatorials(random);
+            arena.FightOfWarriors(random);
         }
     }
 
@@ -28,15 +28,15 @@ namespace GladiatorialArena
             _isOpen = isOpenArena;
         }
 
-        public void ChoiseGladiatorials(Random random)
+        public void FightOfWarriors(Random random)
         {
             string userInput = "";
             int warriorOneChoice = 0;
-            int warriorTwoChoise = 0;
+            int warriorTwoСhoice = 0;
 
             if (_warriors.Count == 0)
             {
-                Console.WriteLine("В темнице нету войнов.");
+                Console.WriteLine("В темнице нет войнов.");
                 _isOpen = false;
             }
             while (_isOpen == true)
@@ -48,9 +48,12 @@ namespace GladiatorialArena
                 Console.WriteLine("\nВыберите бойца #1: ");
                 warriorOneChoice = GetIndex(_warriors.Count);
                 Console.WriteLine("Выберите бойца #2: ");
-                warriorTwoChoise = GetIndex(_warriors.Count, warriorOneChoice);
-                Fight(_warriors[warriorOneChoice - 1], _warriors[warriorTwoChoise - 1], random);
-                Console.Write("\nЕсли хотите закрыть арену введите yes: ");
+                warriorTwoСhoice = GetIndex(_warriors.Count, warriorOneChoice);
+                Battle(_warriors[warriorOneChoice - 1], _warriors[warriorTwoСhoice - 1], random);
+                
+                RemoveDeadWarriro(warriorOneChoice - 1);
+                RemoveDeadWarriro(warriorTwoСhoice - 1);
+                Console.Write("\nЕсли хотите закрыть арену, введите yes: ");
                 userInput = Console.ReadLine();
                 if (userInput == "yes")
                 {
@@ -62,43 +65,41 @@ namespace GladiatorialArena
         private int GetIndex(int countWarriors, int warriorCheck = 0)
         {
             int userInput = 0;
-            bool resultTryConvert = true;
+            bool resultCheck = true;
 
-            while (resultTryConvert == true)
+            while (resultCheck == true)
             {
                 bool resultConvert = int.TryParse(Console.ReadLine(), out userInput);
                 if (userInput <= 0 || userInput > countWarriors)
                 {
-                    Console.WriteLine("Такого бойца нету. Выберите другова.");
+                    Console.WriteLine("Такого бойца нет. Выберите другого.");
                     continue;
                 }
                 else if (userInput == warriorCheck)
                 {
-                    Console.WriteLine("Этот боец уже выбран. Выберите другова.");
+                    Console.WriteLine("Этот боец уже выбран. Выберите другого.");
                     continue;
                 }
-                resultTryConvert = resultConvert ? false : true;
-                if (resultTryConvert)
+                resultCheck = resultConvert ? false : true; 
+                if (resultCheck)
                     Console.WriteLine("Вы ввели не коректные данные. Попробуйте еще раз.");
             }
             return userInput;
         }
 
-        private void Fight(Warrior oneWarrior, Warrior twoWarrior, Random random)
+        private void Battle(Warrior oneWarrior, Warrior twoWarrior, Random random)
         {
             string classNameWarriorOne = oneWarrior.ClassName;
             string classNameWarriorTwo = twoWarrior.ClassName;
-            float healthWarriorOne = oneWarrior.Health;
-            float healthWarriorTwo = twoWarrior.Health;
             int warriorOneAction, warriorTwoAction, rounds = 0, countStunning = 0;
 
             Console.WriteLine($"На арене сражаются: \n{classNameWarriorOne} VS {classNameWarriorTwo}\n\n");
-            while (healthWarriorOne > 0 && healthWarriorTwo > 0)
+            while (oneWarrior.Health > 0 && twoWarrior.Health > 0)
             {
                 RestorationOfAbilities(oneWarrior);
                 RestorationOfAbilities(twoWarrior);
-                warriorOneAction = ChoiseOfAction(random);
-                warriorTwoAction = ChoiseOfAction(random);
+                warriorOneAction = СhooseOfAction(random);
+                warriorTwoAction = СhooseOfAction(random);
                 MoveBattleCourse(oneWarrior, twoWarrior, ref warriorOneAction, warriorTwoAction, classNameWarriorOne, ref countStunning, random);
                 MoveBattleCourse(twoWarrior, oneWarrior, ref warriorTwoAction, warriorOneAction, classNameWarriorTwo, ref countStunning, random);
                 oneWarrior.ShowInfo();
@@ -119,85 +120,94 @@ namespace GladiatorialArena
                 Console.WriteLine($"------------Раунд: {++rounds}------------\n");
             }
             Console.Write("Бой окончен. ");
-            if (healthWarriorOne >= 0 && healthWarriorTwo >= 0)
+            if (oneWarrior.Health <= 0 && twoWarrior.Health <= 0)
             {
                 Console.Write("Ничья. Оба бойца погибли.");
             }
             else
             {
-                string resultFight = healthWarriorOne >= 0 ? $"{classNameWarriorOne}" : $"{classNameWarriorTwo}";
+                string resultFight = oneWarrior.Health >= 0 ? $"{classNameWarriorOne}" : $"{classNameWarriorTwo}";
                 Console.WriteLine($"Победил: {resultFight}");
             }
         }
 
-        private int ChoiseOfAction(Random random)
+        private void RemoveDeadWarriro(int selectedWarrior)
+        {
+            if (_warriors[selectedWarrior].Health <= 0)
+            {
+                _warriors.RemoveAt(selectedWarrior);
+                
+            }
+        }
+
+        private int СhooseOfAction(Random random)
         {
             return random.Next(0, 3);
         }
 
-        private void AttacWarrior(float action, Warrior choiceWarrior)
+        private void AttacWarrior(float action, Warrior selectedWarrior)
         {
-            choiceWarrior.Attac(action);
+            selectedWarrior.Attac(action);
         }
 
-        private void MoveWarriorInfo(int wariorAction, string choiceWarrior)
+        private void MoveWarriorInfo(int wariorAction, string selectedWarrior)
         {
             if (wariorAction == 0)
             {
-                Console.WriteLine($"Боец {choiceWarrior} защищаеться");
+                Console.WriteLine($"Боец {selectedWarrior} защищается");
             }
             else if (wariorAction == 1)
             {
-                Console.WriteLine($"Боец {choiceWarrior} атакует");
+                Console.WriteLine($"Боец {selectedWarrior} атакует");
             }
             else if (wariorAction == 2)
             {
-                Console.WriteLine($"Боец {choiceWarrior} применяет спец атаку");
+                Console.WriteLine($"Боец {selectedWarrior} применяет спец атаку");
             }
         }
 
-        private void MoveBattleCourse(Warrior choiceWarrior, Warrior enemyWarrior, ref int choiceWarriorAction, int enemyWarriorAction, string classNameWarrior, ref int countStunning, Random random)
+        private void MoveBattleCourse(Warrior selectedWarrior, Warrior enemyWarrior, ref int selectedWarriorAction, int enemyWarriorAction, string classNameWarrior, ref int countStunning, Random random)
         {
-            if (choiceWarrior.Status)
+            if (selectedWarrior.Status)
             {
-                MoveWarriorInfo(choiceWarriorAction, classNameWarrior);
-                MoveWarrior(choiceWarrior, enemyWarrior, enemyWarriorAction, choiceWarriorAction, ref countStunning, random);
+                MoveWarriorInfo(selectedWarriorAction, classNameWarrior);
+                MoveWarrior(selectedWarrior, enemyWarrior, enemyWarriorAction, selectedWarriorAction, ref countStunning, random);
             }
             else
             {
                 Console.WriteLine($"{classNameWarrior} оглушен.");
-                choiceWarriorAction = 1;
+                selectedWarriorAction = 1;
             }
         }
 
-        private void MoveWarrior(Warrior choiceWarrior, Warrior enemyWarrior, int enemyWarriorAction, int choiceWarriorAction, ref int countStunning, Random random)
+        private void MoveWarrior(Warrior selectedWarrior, Warrior enemyWarrior, int enemyWarriorAction, int selectedWarriorAction, ref int countStunning, Random random)
         {
             if (enemyWarriorAction == 2)
             {
                 enemyWarriorAction--;
             }
-            int moveWarriors = enemyWarriorAction * choiceWarriorAction;
+            int moveWarriors = enemyWarriorAction * selectedWarriorAction;
             float action;
-            switch (choiceWarrior)
+            switch (selectedWarrior)
             {
                 case Barbarian barbarian:
-                    action = choiceWarriorAction == 2 ? barbarian.AttackSwipe() : barbarian.Damage * moveWarriors;
+                    action = selectedWarriorAction == 2 ? barbarian.AttackSwipe() : barbarian.Damage * moveWarriors;
                     AttacWarrior(action, enemyWarrior);
                     break;
                 case Warloсk warlock:
-                    action = choiceWarriorAction == 2 ? warlock.AttackBallOfDarkness() * enemyWarriorAction : warlock.Damage * moveWarriors;
+                    action = selectedWarriorAction == 2 ? warlock.AttackBallOfDarkness() * enemyWarriorAction : warlock.Damage * moveWarriors;
                     AttacWarrior(action, enemyWarrior);
                     break;
                 case Knight knight:
-                    action = choiceWarriorAction == 2 ? knight.AttackCounter() * enemyWarriorAction : knight.Damage * moveWarriors;
+                    action = selectedWarriorAction == 2 ? knight.AttackCounter() * enemyWarriorAction : knight.Damage * moveWarriors;
                     AttacWarrior(action, enemyWarrior);
                     break;
                 case Archer archer:
-                    action = choiceWarriorAction == 2 ? archer.ShotArrows(enemyWarrior, ref countStunning, random.Next(1,5)) * enemyWarriorAction : archer.Damage * moveWarriors;
+                    action = selectedWarriorAction == 2 ? archer.ShotArrows(enemyWarrior, ref countStunning, random.Next(1,5)) * enemyWarriorAction : archer.Damage * moveWarriors;
                     AttacWarrior(action, enemyWarrior);
                     break;
                 case Witcher witcher:
-                    action = choiceWarriorAction == 2 ? witcher.ChoicePotion(random.Next(1, 4)) * enemyWarriorAction : witcher.Damage * moveWarriors;
+                    action = selectedWarriorAction == 2 ? witcher.ChoosePotion(random.Next(1, 4)) * enemyWarriorAction : witcher.Damage * moveWarriors;
                     AttacWarrior(action, enemyWarrior);
                     break;
             }
@@ -265,6 +275,7 @@ namespace GladiatorialArena
 
         public float AttackSwipe()
         {
+            Console.WriteLine("Варвар кричит мяу-мяу"); // правки кота
             return Damage * 2;
         }
     }
@@ -374,7 +385,7 @@ namespace GladiatorialArena
             NumberPotion = 0;
         }
 
-        public float ChoicePotion(int numberPotion)
+        public float ChoosePotion(int numberPotion)
         {
             int rollbackMove = 5;
             int armorPoints = 15;
@@ -394,7 +405,7 @@ namespace GladiatorialArena
                         break;
                     case 3:
                         DrinkPotionArmor();
-                        Console.WriteLine($"Зелье добовляет {healthPoints} едениц защите.");
+                        Console.WriteLine($"Зелье добовляет {armorPoints} едениц защите.");
                         break;
                     default:
                         Console.WriteLine("Зелье не применяеться.");
