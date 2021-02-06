@@ -102,7 +102,7 @@ namespace GladiatorialArena
 
         private void Battle(Warrior oneWarrior, Warrior twoWarrior, Random random)
         {
-            int warriorOneAction, warriorTwoAction, rounds = 0, countStunning = 0;
+            int warriorOneAction, warriorTwoAction, rounds = 0;
 
             Console.WriteLine($"На арене сражаются: \n{oneWarrior.ClassName} VS {twoWarrior.ClassName}\n\n");
             while (oneWarrior.Health > 0 && twoWarrior.Health > 0)
@@ -111,23 +111,10 @@ namespace GladiatorialArena
                 RestorationOfAbilities(twoWarrior);
                 warriorOneAction = СhooseOfAction(random);
                 warriorTwoAction = СhooseOfAction(random);
-                MoveBattleCourse(oneWarrior, twoWarrior, ref warriorOneAction, warriorTwoAction, ref countStunning, random);
-                MoveBattleCourse(twoWarrior, oneWarrior, ref warriorTwoAction, warriorOneAction, ref countStunning, random);
+                MoveBattleCourse(oneWarrior, twoWarrior, ref warriorOneAction, warriorTwoAction, random);
+                MoveBattleCourse(twoWarrior, oneWarrior, ref warriorTwoAction, warriorOneAction, random);
                 oneWarrior.ShowInfo();
                 twoWarrior.ShowInfo();
-                if (countStunning > 0)
-                {
-                    countStunning--;
-                    Console.WriteLine($"{countStunning}");
-                }
-                else
-                {
-                    if (oneWarrior.Status == false || twoWarrior.Status == false)
-                    {
-                        oneWarrior.ChengeStatus(true);
-                        twoWarrior.ChengeStatus(true);
-                    }
-                }
                 Console.WriteLine($"------------Раунд: {++rounds}------------\n");
             }
             Console.Write("Бой окончен. ");
@@ -181,12 +168,12 @@ namespace GladiatorialArena
             }
         }
 
-        private void MoveBattleCourse(Warrior selectedWarrior, Warrior enemyWarrior, ref int selectedWarriorAction, int enemyWarriorAction, ref int countStunning, Random random)
+        private void MoveBattleCourse(Warrior selectedWarrior, Warrior enemyWarrior, ref int selectedWarriorAction, int enemyWarriorAction, Random random)
         {
             if (selectedWarrior.Status)
             {
                 MoveWarriorInfo(selectedWarriorAction, selectedWarrior.ClassName);
-                MoveWarrior(selectedWarrior, enemyWarrior, enemyWarriorAction, selectedWarriorAction, ref countStunning, random);
+                MoveWarrior(selectedWarrior, enemyWarrior, enemyWarriorAction, selectedWarriorAction, random);
             }
             else
             {
@@ -195,7 +182,7 @@ namespace GladiatorialArena
             }
         }
 
-        private void MoveWarrior(Warrior selectedWarrior, Warrior enemyWarrior, int enemyWarriorAction, int selectedWarriorAction, ref int countStunning, Random random)
+        private void MoveWarrior(Warrior selectedWarrior, Warrior enemyWarrior, int enemyWarriorAction, int selectedWarriorAction, Random random)
         {
             int moveWarriors = enemyWarriorAction * selectedWarriorAction;
             float action;
@@ -203,7 +190,7 @@ namespace GladiatorialArena
             {
                 enemyWarriorAction--;
             }
-            action = selectedWarriorAction == 2 ? selectedWarrior.SpecialAttack(enemyWarrior, ref countStunning, ref enemyWarriorAction) * enemyWarriorAction : selectedWarrior.Damage * moveWarriors;
+            action = selectedWarriorAction == 2 ? selectedWarrior.SpecialAttack(enemyWarrior, ref enemyWarriorAction) * enemyWarriorAction : selectedWarrior.Damage * moveWarriors;
             AttacWarrior(action, enemyWarrior);
         }
 
@@ -221,6 +208,7 @@ namespace GladiatorialArena
                     knight.SaveHealth();
                     break;
             }
+            warrior.RestorationWarrior();
         }
     }
 
@@ -230,7 +218,22 @@ namespace GladiatorialArena
         public float Health { get; protected set; }
         public bool Status { get; protected set; }
 
+        protected int CountStunning;
         protected float Armor;
+
+        private float _damage;
+
+        public float Damage
+        {
+            get
+            {
+                return _damage;
+            }
+            private set
+            {
+                _damage = value < 0 ? value * -1 : value;
+            }
+        }
 
         private float _armor
         {
@@ -255,20 +258,6 @@ namespace GladiatorialArena
             }
         }
 
-        private float _damage;
-
-        public float Damage
-        {
-            get
-            {
-                return _damage;
-            }
-            private set
-            {
-                _damage = value < 0 ? value * -1 : value;
-            }
-        }      
-
         public Warrior(string className, float health, float damage, float armor)
         {
             ClassName = className;
@@ -276,6 +265,28 @@ namespace GladiatorialArena
             Damage = damage;
             _armor = armor;
             Status = true;
+            CountStunning = 0;
+        }
+
+        public void Stunning(int moveStun)
+        {
+            CountStunning = moveStun;
+        }
+
+        public void RestorationWarrior()
+        {
+            if (CountStunning > 0)
+            {
+                CountStunning--;
+                Console.WriteLine($"{CountStunning}");
+            }
+            else
+            {
+                if (Status == false)
+                {
+                    ChengeStatus(true);
+                }
+            }
         }
 
         public void IncreaseAttac(float raisingDamage)
@@ -309,14 +320,14 @@ namespace GladiatorialArena
             Status = statusWArrior;
         }
 
-        public abstract float SpecialAttack(Warrior enemyWarrior, ref int countStunning, ref int enemyWarriorAction);
+        public abstract float SpecialAttack(Warrior enemyWarrior, ref int enemyWarriorAction);
     }
 
     class Barbarian : Warrior
     {
         public Barbarian(string className, float health, float damage, float armor) : base(className, health, damage, armor) { }
 
-        public override float SpecialAttack(Warrior enemyWarrior, ref int countStunning, ref int enemyWarriorAction)
+        public override float SpecialAttack(Warrior enemyWarrior, ref int enemyWarriorAction)
         {
             Console.WriteLine("Варвар кричит мяу-мяу"); // правки кота
             enemyWarriorAction = 1;
@@ -341,7 +352,7 @@ namespace GladiatorialArena
             }
         }
 
-        public override float SpecialAttack(Warrior enemyWarrior, ref int countStunning, ref int enemyWarriorAction)
+        public override float SpecialAttack(Warrior enemyWarrior, ref int enemyWarriorAction)
         {
             if (_mana < 50)
             {
@@ -367,7 +378,7 @@ namespace GladiatorialArena
             _healthSave = Health;
         }
 
-        public override float SpecialAttack(Warrior enemyWarrior, ref int countStunning, ref int enemyWarriorAction)
+        public override float SpecialAttack(Warrior enemyWarrior, ref int enemyWarriorAction)
         {
             Health = _healthSave;
             return Damage * 2;
@@ -378,27 +389,28 @@ namespace GladiatorialArena
     {
         public Archer(string className, float health, float damage, float armor) : base(className, health, damage, armor) { }
 
-        public float ShotArrows(Warrior enemyWarrior, ref int countStunning, int arrows)
+        public float ShotArrows(Warrior enemyWarrior, int arrows)
         {
-            ChangeArrowStatus(enemyWarrior, ref countStunning);
+            ChangeArrowStatus(enemyWarrior);
             return Damage * arrows;
         }
 
-        public override float SpecialAttack(Warrior enemyWarrior, ref int countStunning, ref int enemyWarriorAction)
+        public override float SpecialAttack(Warrior enemyWarrior, ref int enemyWarriorAction)
         {
             Random random = new Random();
-            ChangeArrowStatus(enemyWarrior, ref countStunning);
+            ChangeArrowStatus(enemyWarrior);
             return Damage * random.Next(1, 5);
         }
 
-        private void ChangeArrowStatus(Warrior enemyWarrior, ref int countStunning)
+        private void ChangeArrowStatus(Warrior enemyWarrior)
         {
             bool statusChange = enemyWarrior.Status == true ? false : true;
             int moves = 3;
             enemyWarrior.ChengeStatus(statusChange);
             if (enemyWarrior.Status == false)
             {
-                countStunning += moves;
+                enemyWarrior.Stunning(moves);
+                
             }
             Console.WriteLine($"{enemyWarrior.ClassName} оглушен на {moves} хода");
         }
@@ -469,7 +481,7 @@ namespace GladiatorialArena
             }
         }
 
-        public override float SpecialAttack(Warrior enemyWarrior, ref int countStunning, ref int enemyWarriorAction)
+        public override float SpecialAttack(Warrior enemyWarrior, ref int enemyWarriorAction)
         {
             Random random = new Random();
             ChoosePotion(random.Next(1, 4));
