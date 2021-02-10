@@ -1,0 +1,133 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace supermarket
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.Write("Введите длинну очереди: ");
+            Supermarket cashbox = new Supermarket(GetLongTurn());
+            cashbox.BuyProduct();
+        }
+
+        static int GetLongTurn()
+        {
+            int longTurn = 0;
+            bool resultConvert = true;
+            while (resultConvert == true)
+            {
+                resultConvert = int.TryParse(Console.ReadLine(), out longTurn);
+                if (resultConvert)
+                {
+                    resultConvert = false;
+                    break;
+                }
+                else
+                {
+                    resultConvert = true;
+                    Console.WriteLine("Вы ввели не коректное значенеи!\nПоробуйте еще раз.");
+                }
+            }
+            return longTurn;
+        }
+    }
+
+    class Supermarket
+    {
+        private Queue<Buer> _buers = new Queue<Buer>();
+        private int _cashOfCheckout;
+
+        public Supermarket(int longTurn)
+        {
+            for (int i = 0; i < longTurn; i++)
+            {
+                _buers.Enqueue(new Buer());
+            }
+            _cashOfCheckout = 0;
+        }
+
+        public void BuyProduct()
+        {
+            bool isOpen = true;
+            int countBuer = 0, sumProducts, cashBuer;
+            while (isOpen == true)
+            {
+                bool tryBuy = true;
+                cashBuer = _buers.Peek().Cash;
+                Console.WriteLine($"Сумма в кассе: {_cashOfCheckout}.\nПокупатель № {++countBuer}. В кошельке: {cashBuer}.");
+                while (tryBuy == true)
+                {
+                    sumProducts = _buers.Peek().GetSumProducts();
+                    if (sumProducts <= cashBuer)
+                    {
+                        _cashOfCheckout += cashBuer - sumProducts;
+                        tryBuy = false;
+                        _buers.Dequeue();
+                    }
+                    else
+                    {
+                        _buers.Peek().ReamoveProduct();
+                    }
+                }
+                Console.WriteLine("\nСледующий покупатель.");
+                if (_buers.Count == 0)
+                {
+                    Console.WriteLine("Очередь закончилась.");
+                    isOpen = false;
+                }
+            }
+        }
+    }
+
+    class Buer
+    {
+        private List<Product> _products = new List<Product>();
+        public int Cash { get; private set; }
+        static private Random _random = new Random();
+
+        public Buer()
+        {
+            int quantityProsucts = _random.Next(1, 9);
+            for (int i = 0; i < quantityProsucts; i++)
+            {
+                _products.Add(new Product());
+            }
+            Cash = _random.Next(100, 2000);
+        }
+
+        public int GetSumProducts()
+        {
+            int sumProducts = 0;
+            foreach (Product cost in _products)
+            {
+                sumProducts += cost.Cost;
+            }
+            Console.WriteLine("Сумма всех продуктов в карзине: " + sumProducts);
+            return sumProducts;
+        }
+
+        public void ReamoveProduct()
+        {
+            Console.WriteLine("У покупателя не достаточно средств, выкладываем один из товаров.");
+            int indexProduct = _random.Next(0, _products.Count - 1);
+            _products.RemoveAt(indexProduct);
+        }
+    }
+
+    class Product
+    {
+        public int Cost { get; private set; }
+
+        static private Random _random = new Random();
+
+        public Product()
+        {
+            Cost = _random.Next(1, 667);
+        }
+    }
+}
