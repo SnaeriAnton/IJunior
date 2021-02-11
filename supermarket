@@ -11,42 +11,36 @@ namespace supermarket
         static void Main(string[] args)
         {
             Console.Write("Введите длинну очереди: ");
-            Supermarket cashbox = new Supermarket(GetLongTurn());
+            Supermarket cashbox = new Supermarket(GetLengthOfTurn());
             cashbox.BuyProduct();
         }
 
-        static int GetLongTurn()
+        static int GetLengthOfTurn()
         {
-            int longTurn = 0;
-            bool resultConvert = true;
-            while (resultConvert == true)
+            int lengthOfTurn = 0;
+            bool resultConvert = false;
+            while (resultConvert == false)
             {
-                resultConvert = int.TryParse(Console.ReadLine(), out longTurn);
-                if (resultConvert)
+                resultConvert = int.TryParse(Console.ReadLine(), out lengthOfTurn);
+                if (resultConvert == false)
                 {
-                    resultConvert = false;
-                    break;
-                }
-                else
-                {
-                    resultConvert = true;
                     Console.WriteLine("Вы ввели не коректное значенеи!\nПоробуйте еще раз.");
                 }
             }
-            return longTurn;
+            return lengthOfTurn;
         }
     }
 
     class Supermarket
     {
-        private Queue<Buer> _buers = new Queue<Buer>();
+        private Queue<Buyer> _buers = new Queue<Buyer>();
         private int _cashOfCheckout;
 
         public Supermarket(int longTurn)
         {
             for (int i = 0; i < longTurn; i++)
             {
-                _buers.Enqueue(new Buer());
+                _buers.Enqueue(new Buyer());
             }
             _cashOfCheckout = 0;
         }
@@ -55,25 +49,19 @@ namespace supermarket
         {
             bool isOpen = true;
             int countBuer = 0, sumProducts, cashBuer;
+            Buyer buyer = _buers.Peek();
             while (isOpen == true)
             {
-                bool tryBuy = true;
-                cashBuer = _buers.Peek().Cash;
+                cashBuer = buyer.Cash;
                 Console.WriteLine($"Сумма в кассе: {_cashOfCheckout}.\nПокупатель № {++countBuer}. В кошельке: {cashBuer}.");
-                while (tryBuy == true)
+                sumProducts = buyer.GetSumProducts();
+                while (sumProducts <= cashBuer)
                 {
-                    sumProducts = _buers.Peek().GetSumProducts();
-                    if (sumProducts <= cashBuer)
-                    {
-                        _cashOfCheckout += cashBuer - sumProducts;
-                        tryBuy = false;
-                        _buers.Dequeue();
-                    }
-                    else
-                    {
-                        _buers.Peek().ReamoveProduct();
-                    }
+                    buyer.RemoveProduct();
+                    sumProducts = buyer.GetSumProducts();
                 }
+                _cashOfCheckout += cashBuer - sumProducts;
+                _buers.Dequeue();
                 Console.WriteLine("\nСледующий покупатель.");
                 if (_buers.Count == 0)
                 {
@@ -84,13 +72,14 @@ namespace supermarket
         }
     }
 
-    class Buer
+    class Buyer
     {
-        private List<Product> _products = new List<Product>();
         public int Cash { get; private set; }
-        static private Random _random = new Random();
 
-        public Buer()
+        private static Random _random = new Random();
+        private List<Product> _products = new List<Product>();
+
+        public Buyer()
         {
             int quantityProsucts = _random.Next(1, 9);
             for (int i = 0; i < quantityProsucts; i++)
@@ -111,7 +100,7 @@ namespace supermarket
             return sumProducts;
         }
 
-        public void ReamoveProduct()
+        public void RemoveProduct()
         {
             Console.WriteLine("У покупателя не достаточно средств, выкладываем один из товаров.");
             int indexProduct = _random.Next(0, _products.Count - 1);
@@ -123,7 +112,7 @@ namespace supermarket
     {
         public int Cost { get; private set; }
 
-        static private Random _random = new Random();
+        private static Random _random = new Random();
 
         public Product()
         {
