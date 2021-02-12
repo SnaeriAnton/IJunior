@@ -12,7 +12,7 @@ namespace supermarket
         {
             Console.Write("Введите длинну очереди: ");
             Supermarket cashbox = new Supermarket(GetLengthOfTurn());
-            cashbox.BuyProduct();
+            cashbox.WorkCashOfCheckout();
         }
 
         static int GetLengthOfTurn()
@@ -33,51 +33,47 @@ namespace supermarket
 
     class Supermarket
     {
-        private Queue<Buyer> _buers = new Queue<Buyer>();
+        private Queue<Buyer> _buyers = new Queue<Buyer>();
         private int _cashOfCheckout;
 
         public Supermarket(int longTurn)
         {
             for (int i = 0; i < longTurn; i++)
             {
-                _buers.Enqueue(new Buyer());
+                _buyers.Enqueue(new Buyer());
             }
             _cashOfCheckout = 0;
         }
 
-        public void BuyProduct()
+        public void WorkCashOfCheckout()
         {
-            bool isOpen = true;
-            int countBuer = 0, sumProducts, cashBuer;
-            Buyer buyer = _buers.Peek();
-            while (isOpen == true)
+            int countBuyer = 0, sumProducts, cashBuyer;
+            while (_buyers.Count > 0)
             {
-                cashBuer = buyer.Cash;
-                Console.WriteLine($"Сумма в кассе: {_cashOfCheckout}.\nПокупатель № {++countBuer}. В кошельке: {cashBuer}.");
+                Buyer buyer = _buyers.Dequeue();
+                cashBuyer = buyer.Cash;
+                Console.WriteLine($"Сумма в кассе: {_cashOfCheckout}.\nПокупатель № {++countBuyer}. В кошельке: {cashBuyer}.");
                 sumProducts = buyer.GetSumProducts();
-                while (sumProducts <= cashBuer)
+                buyer.ShowInfo();
+                Console.ReadKey();
+                while (sumProducts >= cashBuyer)
                 {
                     buyer.RemoveProduct();
                     sumProducts = buyer.GetSumProducts();
                 }
-                _cashOfCheckout += cashBuer - sumProducts;
-                _buers.Dequeue();
+                _cashOfCheckout += sumProducts;
                 Console.WriteLine("\nСледующий покупатель.");
-                if (_buers.Count == 0)
-                {
-                    Console.WriteLine("Очередь закончилась.");
-                    isOpen = false;
-                }
             }
+            Console.WriteLine("Очередь закончилась.");
         }
     }
 
     class Buyer
     {
-        public int Cash { get; private set; }
-
         private static Random _random = new Random();
         private List<Product> _products = new List<Product>();
+
+        public int Cash { get; private set; }  
 
         public Buyer()
         {
@@ -106,13 +102,23 @@ namespace supermarket
             int indexProduct = _random.Next(0, _products.Count - 1);
             _products.RemoveAt(indexProduct);
         }
+
+        public void ShowInfo()
+        {
+            int i = 0;
+            Console.WriteLine(Cash);
+            foreach (var item in _products)
+            {
+                Console.WriteLine($"{++i}. {item.Cost}");
+            }
+        }
     }
 
     class Product
     {
-        public int Cost { get; private set; }
-
         private static Random _random = new Random();
+
+        public int Cost { get; private set; }
 
         public Product()
         {
