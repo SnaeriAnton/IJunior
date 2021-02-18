@@ -1,0 +1,177 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace War
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Battleground battleground = new Battleground();
+            battleground.Action();
+        }
+    }
+
+    class Battleground
+    {
+        private Army _firstArmy;
+        private Army _secondArmy;
+
+        public Battleground()
+        {
+            _firstArmy = new Army("Арстоцка");
+            _secondArmy = new Army("Латверия");
+        }
+
+        public void Action()
+        {
+            string nameCountry;
+            int soldierOfFirstArmy = 0;
+            int soldierOfSecondArmy = 0;
+            int sizeFirstArmy = _firstArmy.GetSizeDetschment(), sizeSecondArmy = _secondArmy.GetSizeDetschment();
+            while (sizeFirstArmy > 0 && sizeSecondArmy > 0)
+            {
+                _firstArmy.Battle(soldierOfFirstArmy, _secondArmy, soldierOfSecondArmy);
+                _secondArmy.Battle(soldierOfSecondArmy, _firstArmy, soldierOfFirstArmy);
+                _firstArmy.RemoveDeadSoldier(soldierOfFirstArmy);
+                _secondArmy.RemoveDeadSoldier(soldierOfSecondArmy);
+                sizeFirstArmy = _firstArmy.GetSizeDetschment();
+                sizeSecondArmy = _secondArmy.GetSizeDetschment();
+                soldierOfFirstArmy += soldierOfFirstArmy == sizeFirstArmy ? 0 : 1;
+                soldierOfSecondArmy += soldierOfSecondArmy == sizeSecondArmy ? 0 : 1;
+                CheckSizeArmy(soldierOfFirstArmy, sizeFirstArmy, ref soldierOfFirstArmy);
+                CheckSizeArmy(soldierOfSecondArmy, sizeSecondArmy, ref soldierOfSecondArmy);
+                InfoAemy();
+            }
+            if (sizeFirstArmy <= 0 && sizeSecondArmy <= 0)
+            {
+                nameCountry = "Обе армии пали";
+            }
+            else
+            {
+                nameCountry = sizeFirstArmy <= 0 ? _secondArmy.NameCountry : _firstArmy.NameCountry;
+            }
+            Console.WriteLine($"Победила: {nameCountry}");
+        }
+
+        public void CheckSizeArmy(int soldierOfArmy, int sizeArmy, ref int soldierOfFirstArmy)
+        {
+            if (soldierOfArmy == sizeArmy)
+            {
+                soldierOfFirstArmy = 0;
+            }
+        }
+
+        public void InfoAemy()
+        {
+            _firstArmy.ShowInfo(_firstArmy.NameCountry);
+            _secondArmy.ShowInfo(_secondArmy.NameCountry);
+            Console.WriteLine();
+        }
+
+    }
+
+    class Army
+    {
+        private List<Soldier> _soldiers = new List<Soldier>();
+        private static Random _random = new Random();
+
+        public string NameCountry { get; private set; }
+
+        public Army(string nameCountry)
+        {
+            int sizeDetschment = _random.Next(1, 101);
+            NameCountry = nameCountry;
+            for (int i = 0; i < sizeDetschment; i++)
+            {
+                _soldiers.Insert(i, new Soldier());
+            }
+        }
+
+        public int GetSizeDetschment()
+        {
+            return _soldiers.Count;
+        }
+
+        public void Battle(int numberSolider, Army enemyArmy, int numberEnemySoldier)
+        {
+            _soldiers[numberSolider].Treatment(_soldiers[_random.Next(0, _soldiers.Count)]);
+            _soldiers[numberSolider].Attack(enemyArmy._soldiers[numberEnemySoldier]);
+        }
+
+        public void ShowInfo(string nameArmy)
+        {
+            Console.WriteLine($"Длинна армии  {nameArmy} : {_soldiers.Count}");
+        }
+
+        public void RemoveDeadSoldier(int deadSoldier)
+        {
+            if (_soldiers[deadSoldier].Health <= 0)
+            {
+                _soldiers.RemoveAt(deadSoldier);
+            }
+        }
+    }
+
+    class Soldier
+    {
+        private static Random _random = new Random();
+        private bool _weapon;
+        private int _cartridges;
+        private bool _captainAmerica; //super Soldier
+        private bool _medic;
+
+        public float Health { get; private set; }
+        public float Damage { get; private set; }
+        public float Armor { get; private set; }
+
+        public Soldier()
+        {
+            int gain;
+            _captainAmerica = _random.Next(0, 100) == 1 ? true : false;
+            gain = _captainAmerica == true ? 4 : 1;
+            Health = _random.Next(10, 101) * gain;
+            Damage = _random.Next(1, 40) * gain;
+            Armor = _random.Next(0, 80) * gain;
+            _weapon = _random.Next(0, 3) == 1 && _captainAmerica == false ? true : false;
+            _cartridges = _weapon == true ? _random.Next(1, 30) : 0;
+            _medic = _random.Next(0, 3) == 1 && _captainAmerica == false && _weapon == false ? true : false;
+        }
+
+        public void Attack(Soldier enemyWarrior)
+        {
+            int percentageOfDamagePAssed = 100;
+            int bulletDamage = 0;
+            if (_captainAmerica == true)
+            {
+                percentageOfDamagePAssed = 1000;
+                Console.WriteLine("Супер солдат защищаеться.");
+            }
+
+            if (enemyWarrior._weapon == true && enemyWarrior._cartridges != 0)
+            {
+                enemyWarrior._cartridges--;
+                int cartridgesDamage = 30;
+                Console.WriteLine($"Урон от пули + {cartridgesDamage} урона.");
+            }
+            else
+            {
+                Console.WriteLine("Пули закончелись!");
+            }
+            Health -= ((enemyWarrior.Damage + (1 * bulletDamage) / 100)) * (percentageOfDamagePAssed - Armor);
+        }
+
+        public void Treatment(Soldier numberWarrior)
+        {
+            if (_medic == true)
+            {
+                int healthPoints = 10;
+                numberWarrior.Health += healthPoints;
+                Console.WriteLine($"Лечение союзника на {healthPoints} едениц. ");
+            }
+        }
+    }
+}
