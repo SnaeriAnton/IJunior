@@ -37,11 +37,9 @@ namespace War
                 _secondArmy.Battle(soldierOfSecondArmy, _secondArmy.GetWarrior(soldierOfFirstArmy));
                 _firstArmy.RemoveDeadSoldier(soldierOfFirstArmy);
                 _secondArmy.RemoveDeadSoldier(soldierOfSecondArmy);
-                soldierOfFirstArmy = soldierOfFirstArmy == _firstArmy.SoldiersCount ? soldierOfFirstArmy : soldierOfFirstArmy++;
-                soldierOfSecondArmy = soldierOfSecondArmy == _secondArmy.SoldiersCount ? soldierOfSecondArmy : soldierOfSecondArmy++;
                 CheckSizeArmy(soldierOfFirstArmy, _firstArmy.SoldiersCount, ref soldierOfFirstArmy);
                 CheckSizeArmy(soldierOfSecondArmy, _secondArmy.SoldiersCount, ref soldierOfSecondArmy);
-                InfoArmy();
+                ShowInfoArmy();
             }
             if (_firstArmy.SoldiersCount <= 0 && _secondArmy.SoldiersCount <= 0)
             {
@@ -54,15 +52,19 @@ namespace War
             Console.WriteLine($"Победила: {nameCountry}");
         }
 
-        public void CheckSizeArmy(int soldierOfArmy, int sizeArmy, ref int soldierOfFirstArmy)
+        private void CheckSizeArmy(int soldierOfArmy, int sizeArmy, ref int nextSoldier)
         {
-            if (soldierOfArmy == sizeArmy)
+            if (soldierOfArmy == _firstArmy.SoldiersCount)
             {
-                soldierOfFirstArmy = 0;
+                nextSoldier++;
+            }
+            else
+            {
+                nextSoldier = 0;
             }
         }
 
-        public void InfoArmy()
+        private void ShowInfoArmy()
         {
             _firstArmy.ShowInfo(_firstArmy.NameCountry);
             _secondArmy.ShowInfo(_secondArmy.NameCountry);
@@ -82,7 +84,7 @@ namespace War
         {
             int sizeDetschment = _random.Next(1, 101);
             NameCountry = nameCountry;
-            bool captainAmerica = false, weapon = false, medic = false;
+            bool captainAmerica, weapon, medic;
             for (int i = 0; i < sizeDetschment; i++)
             {
                 captainAmerica = _random.Next(0, 100) == 1 ? true : false;
@@ -110,28 +112,8 @@ namespace War
         public void Battle(int numberSolider, Warrior enemySoldier)
         {
             float damage = enemySoldier.GetDamage();
-            if (enemySoldier is Shooter)
-            {
-                Shooter shooter = (Shooter)enemySoldier;
-                damage = shooter.Shot();
-            }
-
-            switch (_soldiers[numberSolider])
-            {
-                case Soldier soldier:
-                    soldier.Attack(damage);
-                    break;
-                case SuperSoldier captainAmerica:
-                    captainAmerica.Attack(damage);
-                    break;
-                case Medic medic:
-                    medic.ToHeal(_soldiers[_random.Next(0, SoldiersCount)]);
-                    medic.Attack(damage);
-                    break;
-                default:
-                    _soldiers[numberSolider].Attack(damage);
-                    break;
-            }
+            _soldiers[numberSolider].ToHeal(_soldiers[_random.Next(0, SoldiersCount)]);
+            _soldiers[numberSolider].Attack(damage);
         }
 
         public void ShowInfo(string nameArmy)
@@ -163,9 +145,9 @@ namespace War
 
         public float Health
         {
-            get 
-            { 
-                return _health; 
+            get
+            {
+                return _health;
             }
             set
             {
@@ -177,8 +159,8 @@ namespace War
                 {
                     _health = value;
                 }
-            } 
-        }        
+            }
+        }
 
         public Warrior()
         {
@@ -192,17 +174,19 @@ namespace War
             Health -= damage / 100 * (100 - Armor);
         }
 
-        public float GetDamage()
+        public virtual float GetDamage()
         {
             return Damage;
         }
+
+        public virtual void ToHeal(Warrior numberWarrior) { }
     }
 
     class Soldier : Warrior { }
 
     class Medic : Warrior
     {
-        public void ToHeal(Warrior numberWarrior)
+        public override void ToHeal(Warrior numberWarrior)
         {
             int healthPoints = 10;
             numberWarrior.Health += healthPoints;
@@ -220,7 +204,7 @@ namespace War
             _cartridges = _random.Next(1, 30);
         }
 
-        public float Shot()
+        public override float GetDamage()
         {
             if (_cartridges > 0)
             {
