@@ -1,0 +1,427 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace aquarium
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Aquarium aquarium = new Aquarium(GetNumber());
+            aquarium.LiveFish();
+        }
+
+        static private int GetNumber()
+        {
+            int number = 0;
+            bool resultConvert = false;
+            int aquariumCapacity = 30;
+            Console.Write("Какой вместимости вам нужен аквариум?\n" +
+                $"Масимальная вместимость {aquariumCapacity} рыб.\n");
+            while (resultConvert == false)
+            {
+                resultConvert = int.TryParse(Console.ReadLine(), out number);
+                if (resultConvert == false)
+                {
+                    Console.WriteLine("Выввели не коректное значение попробуйте снова.");
+                    resultConvert = false;
+                }
+                else if (number > aquariumCapacity)
+                {
+                    number = aquariumCapacity;
+                }
+            }
+            return number;
+        }
+    }
+
+    class Aquarium
+    {
+        private int _countFish;
+        private List<Fish> _fish = new List<Fish>();
+
+        public Aquarium(int countFish)
+        {
+            _countFish = countFish;
+        }
+
+        public void LiveFish() 
+        {
+            int fishCountInAquariumNow;
+            bool  cleaningAquarium = false;
+            while (cleaningAquarium == false)
+            {
+                fishCountInAquariumNow = CheckFishInAquarium();
+                ChekingLifeFish();
+                Console.WriteLine($"\n\nВ аквариуме {CheckFishInAquarium()} из {_countFish}\n");
+                ShowInfo();
+                Console.WriteLine($"\n\nВыберите действие:\n" +
+                    $"1. Добавить новую рыбку.\n" +
+                    $"2. Вытащить или вернуть в аквариум рыбку.\n" +
+                    $"3. Выбросить рыбку.\n" +
+                    $"4. Ничего не делать.\n");
+                switch (GetNumber(4))
+                {
+                    case 1:
+                        if (fishCountInAquariumNow < _countFish)
+                        {
+                            AddFish();
+                        }
+                        else
+                        {
+                            Console.WriteLine("Аквариум полон.");
+                        }
+                        break;
+                    case 2:
+                        Console.WriteLine("Выберите рыбку которую хотите вытащить или поместить обратно в аквариум: ");
+                            GetFishOut(GetNumberFish());
+                        break;
+                    case 3:
+                        Console.WriteLine("Выберите рыбку которую хотите убить: ");
+                        RemoveFish(GetNumberFish());
+                        break;
+                    case 4:
+                        break;
+                }
+                Console.WriteLine("\nНе парали почистить аквариум? Да или Нет.");
+                if (GetAnswerUser() == "Да")
+                {
+                    cleaningAquarium = true;
+                }
+            }
+            Console.WriteLine("Аквариум почищен.");
+        }
+
+        private string GetAnswerUser()
+        {
+            string userAnswer = " ";
+            bool result = false;
+            while (result == false)
+            {
+                userAnswer = Console.ReadLine();
+                if (userAnswer == "Да")
+                {
+                    result = true;
+                }
+                else if (userAnswer == "Нет")
+                {
+                    Console.WriteLine("А надо бы!");
+                    result = true;
+                }
+                else
+                {
+                    Console.WriteLine("Вы ввели не коректное значение. Попробуйте еще раз.");
+                }
+            }
+            return userAnswer;
+        }
+
+        private void ShowInfo()
+        {
+            int numberFish = 0;
+            foreach (var fish in _fish)
+            {
+                fish.ShowInfoFish(++numberFish);
+            }
+        }
+
+        private void AddFish()
+        {
+            Console.WriteLine("\nВыберите рыбку которую хотите добавить\n" +
+                "1.Акула\n" +
+                "2.Кит\n" +
+                "3.Золотая рыбка\n" +
+                "4.Сом\n" +
+                "5.Скат\n" +
+                "6.Морская звезда\n" +
+                "7.Гуппи\n" +
+                "8.Черепаха\n" +
+                "Введите номер рыбы который хотите добавить: ");
+            int numberFish = GetNumber(8);
+            Console.Write("введите имя рыбки: ");
+            string nameFish = Console.ReadLine();
+            switch (numberFish)
+            {
+                case 1:
+                    _fish.Add(new Shark(nameFish, "Акула"));
+                    break;
+                case 2:
+                    _fish.Add(new Whale(nameFish, "Кит"));
+                    break;
+                case 3:
+                    _fish.Add(new GoldFish(nameFish, "Золотая рыбка"));
+                    break;
+                case 4:
+                    _fish.Add(new Catfish(nameFish, "Сом"));
+                    break;
+                case 5:
+                    _fish.Add(new Slope(nameFish, "Скат"));
+                    break;
+                case 6:
+                    _fish.Add(new Starfish(nameFish, "Морская звезда"));
+                    break;
+                case 7:
+                    _fish.Add(new Guppy(nameFish, "Гуппи"));
+                    break;
+                case 8:
+                    _fish.Add(new Turtle(nameFish, "Черепаха"));
+                    break;
+            }
+            Console.WriteLine($"Вы добавили рыбку {_fish[_fish.Count - 1].Name} в аквариум.");
+        }
+
+        private int CheckFishInAquarium()
+        {
+            int countFishInAquarium = 0;
+            for (int i = 0; i < _fish.Count; i++)
+            {
+                if (_fish[i].StatusFishInAquarium == true)
+                {
+                    countFishInAquarium++;
+                }
+            }
+            return countFishInAquarium;
+        }
+
+        private int GetNumberFish()
+        {
+            int numberFish = 0;
+            bool resultConvert = false;
+            Console.Write("Введите номер рыбку: ");
+            while (resultConvert == false)
+            {
+                resultConvert = int.TryParse(Console.ReadLine(), out numberFish);
+                if (resultConvert == false)
+                {
+                    Console.WriteLine("Выввели не коректное значение попробуйте снова.");
+                }
+                else if (numberFish <= 0 || numberFish > _fish.Count)
+                {
+                    Console.WriteLine("Такой рыбки нету. Введите другое значение.");
+                    resultConvert = false;
+                }
+            }
+            return numberFish - 1;
+        }
+
+        private int GetNumber(int countList)
+        {
+            int number = 0;
+            bool resultConvert = false;
+            while (resultConvert == false)
+            {
+                resultConvert = int.TryParse(Console.ReadLine(), out number);
+                if (resultConvert == false)
+                {
+                    Console.WriteLine("Выввели не коректное значение попробуйте снова.");
+                }
+                else if (number <= 0 || number > countList)
+                {
+                    Console.WriteLine("Такой рыбы нету. Выберите другую");
+                    resultConvert = false;
+                }
+            }
+            return number;
+        }
+
+        private void ChekingLifeFish()
+        {
+            for (int i = 0; i < _fish.Count; i++)
+            {
+                if (_fish[i].CheckAgeFish())
+                {
+                    RemoveFish(_fish.IndexOf(_fish[i]));
+                    i = 0;
+                }
+                else
+                {
+                    _fish[i].Live();
+                }
+            }
+        }
+
+        private void RemoveFish(int numberFish)
+        {
+            Console.WriteLine($"Рыбка {_fish[numberFish].Name} умерала от старости, голода или вы ее смыли в унитаз.");
+            _fish.RemoveAt(numberFish);
+        }
+
+        private void GetFishOut(int numberFish)
+        {
+            if (_fish[numberFish].StatusFishInAquarium == false && CheckFishInAquarium() >= _countFish)
+            {
+                Console.WriteLine("Вы не можете вернуть эту рыбку в аквариум. Аквариум полон");
+            }
+            else
+            {
+                _fish[numberFish].ChangeOfStatusFish();
+            }
+        }
+    }
+
+    abstract class Fish
+    {
+        public string View { get; private set; }
+        public string Name { get; private set; }
+        protected int Lifespan { get; set; }
+        public int Age { get; private set; }
+        public bool StatusFishInAquarium { get; private set; }
+
+        public Fish(string name, string view)
+        {
+            View = view;
+            Name = name;
+            Age = 0;
+            StatusFishInAquarium = true;
+        }
+
+        public bool CheckAgeFish()
+        {
+            return Age == Lifespan;
+        }
+
+        public void ChangeOfStatusFish()
+        {
+            string userInput;
+            if (StatusFishInAquarium == true)
+            {
+                Console.WriteLine("Вы хотите вытащить рыбку из аквариума?\n" +
+                    "Введите Да или Нет:");
+                userInput = GetUserAnswer();
+                if (userInput == "Да")
+                {
+                    StatusFishInAquarium = false;
+                    Console.WriteLine("Рыба перемещена в пакет.");
+                    return;
+                }
+                else if (userInput == "Нет")
+                {
+                    Console.WriteLine("Вы передумали.");
+                }
+            }
+            else if (StatusFishInAquarium == false)
+            {
+                Console.WriteLine("Вы хотите вернуть рыбку в аквариума?\n" +
+                    "Введите Да или Нет:");
+                userInput = GetUserAnswer();
+                if (userInput == "Да")
+                {
+                    StatusFishInAquarium = true;
+                    Console.WriteLine("Рыба перемещена в аквариум.");
+                }
+                else if (userInput == "Нет")
+                {
+                    Console.WriteLine("Вы передумали.");
+                }
+            }
+        }
+
+        public void Live()
+        {
+            if (Lifespan != Age)
+            {
+                Age++;
+            }
+        }
+
+        public void ShowInfoFish(int numberFish)
+        {
+            string statusFish = StatusFishInAquarium == true ? "В аквариуме" : "В пакете";
+            Console.WriteLine($"{numberFish}. Имя рыбки: {Name}.\n" +
+                $"Вид рыбы: {View}.\n" +
+                $"Возрост рыбы: {Age}\n" +
+                $"Место нахождения рыбы {statusFish}\n" +
+                $"------------------------------------------");
+        }
+
+        private string GetUserAnswer()
+        {
+            string stringUser = " ";
+            bool resultConvert = false;
+            while (resultConvert == false)
+            {
+                stringUser = Console.ReadLine();
+                if (stringUser == "Да")
+                {
+                    resultConvert = true;
+                }
+                else if (stringUser == "Нет")
+                {
+                    resultConvert = true;
+                }
+                else
+                {
+                    Console.WriteLine("Вы ввели не корректное значение, попробуйте еще раз.");
+                }
+            }
+            return stringUser;
+        }
+    }
+
+    class Shark : Fish
+    {
+        public Shark(string name, string view) : base(name, view) 
+        {
+            Lifespan = 30;
+        }
+    }
+
+    class Whale : Fish
+    {
+        public Whale(string name, string view) : base(name, view)
+        {
+            Lifespan = 80;
+        }
+    }
+
+    class GoldFish : Fish
+    {
+        public GoldFish(string name, string view) : base(name, view)
+        {
+            Lifespan = 4;
+        }
+    }
+
+    class Catfish : Fish
+    {
+        public Catfish(string name, string view) : base(name, view)
+        {
+            Lifespan = 60;
+        }
+    }
+
+    class Slope : Fish
+    {
+        public Slope(string name, string view) : base(name, view)
+        {
+            Lifespan = 16;
+        }
+    }
+
+    class Starfish : Fish
+    {
+        public Starfish(string name, string view) : base(name, view)
+        {
+            Lifespan = 45;
+        }
+    }
+
+    class Guppy : Fish
+    {
+        public Guppy(string name, string view) : base(name, view)
+        {
+            Lifespan = 2;
+        }
+}
+
+    class Turtle : Fish
+    {
+        public Turtle(string name, string view) : base(name, view)
+        {
+            Lifespan = 200;
+        }
+    }
+}
