@@ -51,19 +51,22 @@ namespace aquarium
         public void LiveFish() 
         {
             int fishCountInAquariumNow;
-            bool  cleaningAquarium = false;
-            while (cleaningAquarium == false)
+            bool  MudAquarium = false;
+            while (MudAquarium == false)
             {
                 fishCountInAquariumNow = CheckFishInAquarium();
-                ChekingLifeFish();
+                CheckiDeadFish();
+                IncreasingAgeFish();
+
                 Console.WriteLine($"\n\nВ аквариуме {CheckFishInAquarium()} из {_countFish}\n");
                 ShowInfo();
+
                 Console.WriteLine($"\n\nВыберите действие:\n" +
                     $"1. Добавить новую рыбку.\n" +
                     $"2. Вытащить или вернуть в аквариум рыбку.\n" +
                     $"3. Выбросить рыбку.\n" +
                     $"4. Ничего не делать.\n");
-                switch (GetNumber(4))
+                switch (GetNumberFish(4))
                 {
                     case 1:
                         if (fishCountInAquariumNow < _countFish)
@@ -77,19 +80,20 @@ namespace aquarium
                         break;
                     case 2:
                         Console.WriteLine("Выберите рыбку которую хотите вытащить или поместить обратно в аквариум: ");
-                            GetFishOut(GetNumberFish());
+                            GetFishOut(GetNumberFish(_fish.Count) - 1);
                         break;
                     case 3:
                         Console.WriteLine("Выберите рыбку которую хотите убить: ");
-                        RemoveFish(GetNumberFish());
+                        RemoveFish(GetNumberFish(_fish.Count) - 1);
                         break;
                     case 4:
                         break;
                 }
+
                 Console.WriteLine("\nНе парали почистить аквариум? Да или Нет.");
                 if (GetAnswerUser() == "Да")
                 {
-                    cleaningAquarium = true;
+                    MudAquarium = true;
                 }
             }
             Console.WriteLine("Аквариум почищен.");
@@ -140,34 +144,36 @@ namespace aquarium
                 "7.Гуппи\n" +
                 "8.Черепаха\n" +
                 "Введите номер рыбы который хотите добавить: ");
-            int numberFish = GetNumber(8);
+            int numberFish = GetNumberFish(8);
+
             Console.Write("введите имя рыбки: ");
             string nameFish = Console.ReadLine();
+
             switch (numberFish)
             {
                 case 1:
-                    _fish.Add(new Shark(nameFish, "Акула"));
+                    _fish.Add(new Shark(nameFish));
                     break;
                 case 2:
-                    _fish.Add(new Whale(nameFish, "Кит"));
+                    _fish.Add(new Whale(nameFish));
                     break;
                 case 3:
-                    _fish.Add(new GoldFish(nameFish, "Золотая рыбка"));
+                    _fish.Add(new GoldFish(nameFish));
                     break;
                 case 4:
-                    _fish.Add(new Catfish(nameFish, "Сом"));
+                    _fish.Add(new Catfish(nameFish));
                     break;
                 case 5:
-                    _fish.Add(new Slope(nameFish, "Скат"));
+                    _fish.Add(new Slope(nameFish));
                     break;
                 case 6:
-                    _fish.Add(new Starfish(nameFish, "Морская звезда"));
+                    _fish.Add(new Starfish(nameFish));
                     break;
                 case 7:
-                    _fish.Add(new Guppy(nameFish, "Гуппи"));
+                    _fish.Add(new Guppy(nameFish));
                     break;
                 case 8:
-                    _fish.Add(new Turtle(nameFish, "Черепаха"));
+                    _fish.Add(new Turtle(nameFish));
                     break;
             }
             Console.WriteLine($"Вы добавили рыбку {_fish[_fish.Count - 1].Name} в аквариум.");
@@ -178,7 +184,7 @@ namespace aquarium
             int countFishInAquarium = 0;
             for (int i = 0; i < _fish.Count; i++)
             {
-                if (_fish[i].StatusFishInAquarium == true)
+                if (_fish[i].FishStatus == true)
                 {
                     countFishInAquarium++;
                 }
@@ -186,28 +192,7 @@ namespace aquarium
             return countFishInAquarium;
         }
 
-        private int GetNumberFish()
-        {
-            int numberFish = 0;
-            bool resultConvert = false;
-            Console.Write("Введите номер рыбку: ");
-            while (resultConvert == false)
-            {
-                resultConvert = int.TryParse(Console.ReadLine(), out numberFish);
-                if (resultConvert == false)
-                {
-                    Console.WriteLine("Выввели не коректное значение попробуйте снова.");
-                }
-                else if (numberFish <= 0 || numberFish > _fish.Count)
-                {
-                    Console.WriteLine("Такой рыбки нету. Введите другое значение.");
-                    resultConvert = false;
-                }
-            }
-            return numberFish - 1;
-        }
-
-        private int GetNumber(int countList)
+        private int GetNumberFish(int countList)
         {
             int number = 0;
             bool resultConvert = false;
@@ -220,26 +205,30 @@ namespace aquarium
                 }
                 else if (number <= 0 || number > countList)
                 {
-                    Console.WriteLine("Такой рыбы нету. Выберите другую");
+                    Console.WriteLine("Такого номера нету. Введите другое значение.");
                     resultConvert = false;
                 }
             }
             return number;
         }
 
-        private void ChekingLifeFish()
+        private void CheckiDeadFish()
         {
             for (int i = 0; i < _fish.Count; i++)
             {
                 if (_fish[i].CheckAgeFish())
                 {
-                    RemoveFish(_fish.IndexOf(_fish[i]));
+                    RemoveFish(i);
                     i = 0;
                 }
-                else
-                {
-                    _fish[i].Live();
-                }
+            }
+        }
+
+        private void IncreasingAgeFish()
+        {
+            for (int i = 0; i < _fish.Count; i++)
+            {
+                _fish[i].Live();
             }
         }
 
@@ -251,7 +240,7 @@ namespace aquarium
 
         private void GetFishOut(int numberFish)
         {
-            if (_fish[numberFish].StatusFishInAquarium == false && CheckFishInAquarium() >= _countFish)
+            if (_fish[numberFish].FishStatus == false && CheckFishInAquarium() >= _countFish)
             {
                 Console.WriteLine("Вы не можете вернуть эту рыбку в аквариум. Аквариум полон");
             }
@@ -264,18 +253,18 @@ namespace aquarium
 
     abstract class Fish
     {
-        public string View { get; private set; }
+        protected string _view;
+
         public string Name { get; private set; }
         protected int Lifespan { get; set; }
         public int Age { get; private set; }
-        public bool StatusFishInAquarium { get; private set; }
+        public bool FishStatus { get; private set; }
 
-        public Fish(string name, string view)
+        public Fish(string name)
         {
-            View = view;
             Name = name;
             Age = 0;
-            StatusFishInAquarium = true;
+            FishStatus = true;
         }
 
         public bool CheckAgeFish()
@@ -285,37 +274,17 @@ namespace aquarium
 
         public void ChangeOfStatusFish()
         {
-            string userInput;
-            if (StatusFishInAquarium == true)
+            if (FishStatus == true)
             {
                 Console.WriteLine("Вы хотите вытащить рыбку из аквариума?\n" +
                     "Введите Да или Нет:");
-                userInput = GetUserAnswer();
-                if (userInput == "Да")
-                {
-                    StatusFishInAquarium = false;
-                    Console.WriteLine("Рыба перемещена в пакет.");
-                    return;
-                }
-                else if (userInput == "Нет")
-                {
-                    Console.WriteLine("Вы передумали.");
-                }
+                CheckAnswerUser(false, "в пакет");
             }
-            else if (StatusFishInAquarium == false)
+            else
             {
                 Console.WriteLine("Вы хотите вернуть рыбку в аквариума?\n" +
                     "Введите Да или Нет:");
-                userInput = GetUserAnswer();
-                if (userInput == "Да")
-                {
-                    StatusFishInAquarium = true;
-                    Console.WriteLine("Рыба перемещена в аквариум.");
-                }
-                else if (userInput == "Нет")
-                {
-                    Console.WriteLine("Вы передумали.");
-                }
+                CheckAnswerUser(true, "в аквариум");
             }
         }
 
@@ -329,12 +298,28 @@ namespace aquarium
 
         public void ShowInfoFish(int numberFish)
         {
-            string statusFish = StatusFishInAquarium == true ? "В аквариуме" : "В пакете";
+            string statusFish = FishStatus == true ? "В аквариуме" : "В пакете";
             Console.WriteLine($"{numberFish}. Имя рыбки: {Name}.\n" +
-                $"Вид рыбы: {View}.\n" +
+                $"Вид рыбы: {_view}.\n" +
                 $"Возрост рыбы: {Age}\n" +
                 $"Место нахождения рыбы {statusFish}\n" +
                 $"------------------------------------------");
+        }
+
+        private void CheckAnswerUser(bool statusFish, string messageForUser)
+        {
+            string userInput;
+
+            userInput = GetUserAnswer();
+            if (userInput == "Да")
+            {
+                FishStatus = statusFish;
+                Console.WriteLine($"Рыба перемещена {messageForUser}.");
+            }
+            else if (userInput == "Нет")
+            {
+                Console.WriteLine("Вы передумали.");
+            }
         }
 
         private string GetUserAnswer()
@@ -363,64 +348,72 @@ namespace aquarium
 
     class Shark : Fish
     {
-        public Shark(string name, string view) : base(name, view) 
+        public Shark(string name) : base(name) 
         {
+            _view = "Акула";
             Lifespan = 30;
         }
     }
 
     class Whale : Fish
     {
-        public Whale(string name, string view) : base(name, view)
+        public Whale(string name) : base(name)
         {
+            _view = "Кит";
             Lifespan = 80;
         }
     }
 
     class GoldFish : Fish
     {
-        public GoldFish(string name, string view) : base(name, view)
+        public GoldFish(string name) : base(name)
         {
+            _view = "Золотая рыбка";
             Lifespan = 4;
         }
     }
 
     class Catfish : Fish
     {
-        public Catfish(string name, string view) : base(name, view)
+        public Catfish(string name) : base(name)
         {
+            _view = "Сом";
             Lifespan = 60;
         }
     }
 
     class Slope : Fish
     {
-        public Slope(string name, string view) : base(name, view)
+        public Slope(string name) : base(name)
         {
+            _view = "Скат";
             Lifespan = 16;
         }
     }
 
     class Starfish : Fish
     {
-        public Starfish(string name, string view) : base(name, view)
+        public Starfish(string name) : base(name)
         {
+            _view = "Морская звезда";
             Lifespan = 45;
         }
     }
 
     class Guppy : Fish
     {
-        public Guppy(string name, string view) : base(name, view)
+        public Guppy(string name) : base(name)
         {
+            _view = "Гуппи";
             Lifespan = 2;
         }
 }
 
     class Turtle : Fish
     {
-        public Turtle(string name, string view) : base(name, view)
+        public Turtle(string name) : base(name)
         {
+            _view = "Черепаха";
             Lifespan = 200;
         }
     }
