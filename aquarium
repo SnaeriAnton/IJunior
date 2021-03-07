@@ -41,7 +41,7 @@ namespace aquarium
     class Aquarium
     {
         private int _quantityFush;
-        private List<Fish> _fish = new List<Fish>();
+        private List<Fish> _fishes = new List<Fish>();
 
         public Aquarium(int countFish)
         {
@@ -79,25 +79,25 @@ namespace aquarium
                         }
                         break;
                     case 2:
-                        if (_fish.Count == 0)
+                        if (_fishes.Count == 0)
                         {
                             Console.WriteLine("Нету ни одный рыбки.");
                         }
                         else
                         {
                             Console.WriteLine("Выберите рыбку которую хотите вытащить или поместить обратно в аквариум: ");
-                            GetFishOut(GetNumberFish(_fish.Count) - 1);
+                            GetFishOut(GetNumberFish(_fishes.Count) - 1);
                         }
                         break;
                     case 3:
-                        if (_fish.Count == 0)
+                        if (_fishes.Count == 0)
                         {
                             Console.WriteLine("Нету ни одный рыбки.");
                         }
                         else
                         {
                             Console.WriteLine("Выберите рыбку которую хотите убить: ");
-                            RemoveFish(GetNumberFish(_fish.Count) - 1);
+                            RemoveFish(GetNumberFish(_fishes.Count) - 1);
                         }
                         break;
                     case 4:
@@ -140,7 +140,7 @@ namespace aquarium
         private void ShowInfo()
         {
             int numberFish = 0;
-            foreach (var fish in _fish)
+            foreach (var fish in _fishes)
             {
                 fish.ShowInfoFish(++numberFish);
             }
@@ -166,39 +166,39 @@ namespace aquarium
             switch (numberFish)
             {
                 case 1:
-                    _fish.Add(new Shark(nameFish));
+                    _fishes.Add(new Shark(nameFish));
                     break;
                 case 2:
-                    _fish.Add(new Whale(nameFish));
+                    _fishes.Add(new Whale(nameFish));
                     break;
                 case 3:
-                    _fish.Add(new GoldFish(nameFish));
+                    _fishes.Add(new GoldFish(nameFish));
                     break;
                 case 4:
-                    _fish.Add(new Catfish(nameFish));
+                    _fishes.Add(new Catfish(nameFish));
                     break;
                 case 5:
-                    _fish.Add(new Slope(nameFish));
+                    _fishes.Add(new Slope(nameFish));
                     break;
                 case 6:
-                    _fish.Add(new Starfish(nameFish));
+                    _fishes.Add(new Starfish(nameFish));
                     break;
                 case 7:
-                    _fish.Add(new Guppy(nameFish));
+                    _fishes.Add(new Guppy(nameFish));
                     break;
                 case 8:
-                    _fish.Add(new Turtle(nameFish));
+                    _fishes.Add(new Turtle(nameFish));
                     break;
             }
-            Console.WriteLine($"Вы добавили рыбку {_fish[_fish.Count - 1].Name} в аквариум.");
+            Console.WriteLine($"Вы добавили рыбку {_fishes[_fishes.Count - 1].Name} в аквариум.");
         }
 
         private int CountFishInAquarium()
         {
             int countFishInAquarium = 0;
-            for (int i = 0; i < _fish.Count; i++)
+            for (int i = 0; i < _fishes.Count; i++)
             {
-                if (_fish[i].Status == true)
+                if (_fishes[i].Status == true)
                 {
                     countFishInAquarium++;
                 }
@@ -228,9 +228,9 @@ namespace aquarium
 
         private void CheckiDeadFish()
         {
-            for (int i = 0; i < _fish.Count; i++)
+            for (int i = 0; i < _fishes.Count; i++)
             {
-                if (_fish[i].CheckAgeFish())
+                if (_fishes[i].CheckAgeFish())
                 {
                     RemoveFish(i);
                     i = 0;
@@ -240,27 +240,27 @@ namespace aquarium
 
         private void IncreasingAgeFish()
         {
-            for (int i = 0; i < _fish.Count; i++)
+            for (int i = 0; i < _fishes.Count; i++)
             {
-                _fish[i].Live();
+                _fishes[i].Live();
             }
         }
 
         private void RemoveFish(int numberFish)
         {
-            Console.WriteLine($"Рыбка {_fish[numberFish].Name} умерала от старости, голода или вы ее смыли в унитаз.");
-            _fish.RemoveAt(numberFish);
+            Console.WriteLine($"Рыбка {_fishes[numberFish].Name} умерала от старости, голода или вы ее смыли в унитаз.");
+            _fishes.RemoveAt(numberFish);
         }
 
         private void GetFishOut(int numberFish)
         {
-            if (_fish[numberFish].Status == false && CountFishInAquarium() >= _quantityFush)
+            if (_fishes[numberFish].Status == false && CountFishInAquarium() >= _quantityFush)
             {
                 Console.WriteLine("Вы не можете вернуть эту рыбку в аквариум. Аквариум полон");
             }
             else
             {
-                _fish[numberFish].ChangeOfStatusFish();
+                _fishes[numberFish].ChangeOfStatusFish();
             }
         }
     }
