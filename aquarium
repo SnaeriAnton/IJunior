@@ -106,7 +106,7 @@ namespace aquarium
                             else
                             {
                                 ShowInfo(false);
-                                Console.WriteLine("Выберите рыбку которую хотите поместить обратно в аквариум: ");
+                                Console.WriteLine("\nВыберите рыбку которую хотите поместить обратно в аквариум: ");
                                 GetFishOut((GetNumberFish(_fishes.Count) - 1), true, "в аквариум");
                             }
                         }
@@ -118,7 +118,8 @@ namespace aquarium
                         }
                         else
                         {
-                            Console.WriteLine("Выберите рыбку которую хотите убить: ");
+                            ShowInfo(true, true);
+                            Console.WriteLine("\nВыберите рыбку которую хотите убить: ");
                             RemoveFish(GetNumberFish(_fishes.Count) - 1);
                         }
                         break;
@@ -159,11 +160,11 @@ namespace aquarium
             return userAnswer;
         }
 
-        private void ShowInfo(bool statusFish)
+        private void ShowInfo(bool statusFish, bool notStatusFish = false)
         {
             for (int i = 0; i < _fishes.Count; i++)
             {
-                if (_fishes[i].Status == statusFish)
+                if (_fishes[i].Status == statusFish || notStatusFish == true)
                 {
                     _fishes[i].ShowInfoFish(i + 1);
                 }
