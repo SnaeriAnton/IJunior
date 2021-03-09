@@ -43,6 +43,7 @@ namespace aquarium
         private int _quantityFush;
         private List<Fish> _fishes = new List<Fish>();
 
+        public int CountFishes => _fishes.Count;
         public Aquarium(int countFish)
         {
             _quantityFush = countFish;
@@ -50,29 +51,23 @@ namespace aquarium
 
         public void LiveFish()
         {
-            int fishCountInAquariumNow, fishCountInPAckageNow;
             bool isMudAquarium = false;
             while (isMudAquarium == false)
             {
                 RemoveDeadFish();
-                fishCountInAquariumNow = CountFishInAquarium(true);
-                fishCountInPAckageNow = CountFishInAquarium(false);
                 IncreaseAgeFish();
 
-                Console.WriteLine($"\n\nВ аквариуме {fishCountInAquariumNow} из {_quantityFush}\n" +
-                    $"В пакетах {fishCountInPAckageNow}\n\n");
-                ShowInfo(true);
+                Console.WriteLine($"\n\nВ аквариуме {CountFishes} из {_quantityFush}\n");
+                ShowInfo();
 
                 Console.WriteLine($"\n\nВыберите действие:\n" +
                     $"1. Добавить новую рыбку.\n" +
-                    $"2. Вытащить рыбку из аквариума.\n" +
-                    $"3. Вернуть рыбку в аквариум.\n" +
-                    $"4. Выбросить рыбку.\n" +
-                    $"5. Ничего не делать.\n");
-                switch (GetNumberFish(5))
+                    $"2. Выбросить рыбку.\n" +
+                    $"3. Ничего не делать.\n");
+                switch (GetNumberFish(3))
                 {
                     case 1:
-                        if (fishCountInAquariumNow < _quantityFush)
+                        if (CountFishes < _quantityFush)
                         {
                             AddFish();
                         }
@@ -88,42 +83,14 @@ namespace aquarium
                         }
                         else
                         {
-                            Console.WriteLine("Выберите рыбку которую хотите вытащить из аквариума: ");
-                            GetFishOut((GetNumberFish(_fishes.Count) - 1), false, "в пакете");
+                            if (GetUserAnswer())
+                            {
+                                Console.WriteLine("\nВыберите рыбку которую хотите убить: ");
+                                RemoveFish(GetNumberFish(_fishes.Count) - 1);
+                            }
                         }
                         break;
                     case 3:
-                        if (_fishes.Count == 0)
-                        {
-                            Console.WriteLine("Нету ни одный рыбки.");
-                        }
-                        else
-                        {
-                            if (fishCountInAquariumNow >= _quantityFush)
-                            {
-                                Console.WriteLine("Вы не можете вернуть рыбку в аквариум. Аквариум полон");
-                            }
-                            else
-                            {
-                                ShowInfo(false);
-                                Console.WriteLine("\nВыберите рыбку которую хотите поместить обратно в аквариум: ");
-                                GetFishOut((GetNumberFish(_fishes.Count) - 1), true, "в аквариум");
-                            }
-                        }
-                        break;
-                    case 4:
-                        if (_fishes.Count == 0)
-                        {
-                            Console.WriteLine("Нету ни одный рыбки.");
-                        }
-                        else
-                        {
-                            ShowInfo(true, true);
-                            Console.WriteLine("\nВыберите рыбку которую хотите убить: ");
-                            RemoveFish(GetNumberFish(_fishes.Count) - 1);
-                        }
-                        break;
-                    case 5:
                         break;
                 }
 
@@ -160,14 +127,12 @@ namespace aquarium
             return userAnswer;
         }
 
-        private void ShowInfo(bool statusFish, bool notStatusFish = false)
+        private void ShowInfo()
         {
             for (int i = 0; i < _fishes.Count; i++)
             {
-                if (_fishes[i].Status == statusFish || notStatusFish == true)
-                {
                     _fishes[i].ShowInfoFish(i + 1);
-                }
+                
             }
         }
 
@@ -218,19 +183,6 @@ namespace aquarium
             Console.WriteLine($"Вы добавили рыбку {_fishes[_fishes.Count - 1].Name} в аквариум.");
         }
 
-        private int CountFishInAquarium(bool statusFish)
-        {
-            int countFishInAquarium = 0;
-            for (int i = 0; i < _fishes.Count; i++)
-            {
-                if (_fishes[i].Status == statusFish)
-                {
-                    countFishInAquarium++;
-                }
-            }
-            return countFishInAquarium;
-        }
-
         private int GetNumberFish(int countList)
         {
             int number = 0;
@@ -277,53 +229,32 @@ namespace aquarium
             _fishes.RemoveAt(numberFish);
         }
 
-
-        private void GetFishOut(int numberFish, bool statusFish, string messageForUser)
-        {
-            if (_fishes[numberFish].Status == statusFish)
-            {
-                Console.WriteLine($"Вы не можете поместить эту рыбку {messageForUser}. Она уже перемещена.");
-            }
-            else
-            {
-                Console.WriteLine($"Вы хотите переместить рыбку {messageForUser}?\n" +
-                    "Введите Да или Нет:");
-
-                string userInput = GetUserAnswer();
-                if (userInput == "Да")
-                {
-                    _fishes[numberFish].ChangeStatusFish(statusFish);
-                    Console.WriteLine($"Рыба перемещена {messageForUser}.");
-                }
-                else if (userInput == "Нет")
-                {
-                    Console.WriteLine("Вы передумали.");
-                }
-
-            }
-        }
-
-        private string GetUserAnswer()
+        private bool GetUserAnswer()
         {
             string stringUser = " ";
-            bool resultConvert = false;
+            bool resultConvert = false, choiceUser = false;
+            Console.Write("Вы уверены что хотите это сделать?\n" +
+                "Введите Да или Нет:");
             while (resultConvert == false)
             {
                 stringUser = Console.ReadLine();
                 if (stringUser == "Да")
                 {
                     resultConvert = true;
+                    choiceUser = true;
                 }
                 else if (stringUser == "Нет")
                 {
                     resultConvert = true;
+                    choiceUser = false;
+                    Console.WriteLine("Вы передумали.");
                 }
                 else
                 {
                     Console.WriteLine("Вы ввели не корректное значение, попробуйте еще раз.");
                 }
             }
-            return stringUser;
+            return choiceUser;
         }
 
     }
@@ -335,14 +266,12 @@ namespace aquarium
         public string Name { get; private set; }
         protected int Lifespan { get; set; }
         public int Age { get; private set; }
-        public bool Status { get; private set; }
 
         public Fish(string name, string view, int lifespan)
         {
             Name = name;
             _view = view;
             Lifespan = lifespan;
-            Status = true;
         }
 
         public bool CheckAgeFish()
@@ -360,17 +289,10 @@ namespace aquarium
 
         public void ShowInfoFish(int numberFish)
         {
-            string statusFish = Status == true ? "В аквариуме" : "В пакете";
             Console.WriteLine($"{numberFish}. Имя рыбки: {Name}.\n" +
                 $"Вид рыбы: {_view}.\n" +
                 $"Возрост рыбы: {Age}\n" +
-                $"Место нахождения рыбы {statusFish}\n" +
                 $"------------------------------------------");
-        }
-
-        public void ChangeStatusFish(bool newStatusFish)
-        {
-            Status = newStatusFish;
         }
     }
 
