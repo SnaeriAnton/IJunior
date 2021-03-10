@@ -1,0 +1,232 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace zoo
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Zoo zoo = new Zoo();
+            zoo.WalkZoo();
+        }
+    }
+
+    class Zoo
+    {
+        static private Random _random = new Random();
+        private List<Aviary> _aviaries = new List<Aviary>();
+
+        public string Name { get; private set; }
+        public int QuantityAviary { get; private set; }
+
+        public Zoo()
+        {
+            QuantityAviary = _random.Next(1, 10);
+            Name = "Мадагаскар";
+            for (int i = 0; i < QuantityAviary; i++)
+            {
+                _aviaries.Add(new Aviary(i + 1));
+            }
+        }
+
+        public void WalkZoo()
+        {
+            int userInput = 0;
+            bool exitZoo = false;
+            while (exitZoo == false)
+            {
+                Console.WriteLine($"Добро пожаловать в зоопарк: {Name}");
+                ShowListOfAviaties();
+                Console.Write("Выберите вольер к которому хотите подойти:  ");
+                userInput = GetNumber();
+                if (userInput == QuantityAviary + 1)
+                {
+                    exitZoo = true;
+                }
+                else
+                {
+                    ShowInfoAboutAviaty((userInput - 1));
+                    Console.ReadKey();
+                }
+                Console.Clear();
+            }
+            Console.WriteLine("Приходите еще!");
+        }
+
+        private int GetNumber()
+        {
+            int number = 0;
+            bool resuktConvert = false;
+            while (resuktConvert == false)
+            {
+                resuktConvert = int.TryParse(Console.ReadLine(), out number);
+                if (number <= QuantityAviary + 1 && number > 0)
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Вы ввели не корректное значение попробуйте еще раз.");
+                    resuktConvert = false;
+                }
+            }
+            return number;
+        }
+
+        private void ShowListOfAviaties()
+        {
+            for (int i = 0; i < QuantityAviary; i++)
+            {
+                Console.WriteLine($"{i + 1}.Вольер с {_aviaries[i].KindAnimals}");
+            }
+            Console.WriteLine($"{QuantityAviary + 1}.Выход из зоопарка.");
+        }
+
+        private void ShowInfoAboutAviaty(int numberAviaty)
+        {
+            _aviaries[numberAviaty].ShowInfoAboutAviary();
+        }
+    }
+
+    class Aviary
+    {
+        static private Random _random = new Random();
+        private List<Animal> _animals = new List<Animal>();
+
+        public KindAnimals KindAnimals { get; private set; }
+        public int CountAnimals => _animals.Count;
+
+        public Aviary(int kindAnimal)
+        {
+            int quantityAnimals = _random.Next(1, 4);
+            KindAnimals = (KindAnimals)kindAnimal;
+
+            for (int i = 0; i < quantityAnimals; i++)
+            {
+                switch (KindAnimals)
+                {
+                    case KindAnimals.Лисами:
+                        _animals.Add(new Fox());
+                        break;
+                    case KindAnimals.Львами:
+                        _animals.Add(new Lion());
+                        break;
+                    case KindAnimals.Пингвинами:
+                        _animals.Add(new Penguin());
+                        break;
+                    case KindAnimals.Обезьянами:
+                        _animals.Add(new Monkey());
+                        break;
+                    case KindAnimals.Зебрами:
+                        _animals.Add(new Zebra());
+                        break;
+                    case KindAnimals.Жирафами:
+                        _animals.Add(new Giraffe());
+                        break;
+                    case KindAnimals.Бегемотами:
+                        _animals.Add(new Hippopotamus());
+                        break;
+                    case KindAnimals.Лемурами:
+                        _animals.Add(new Lemur());
+                        break;
+                    case KindAnimals.Дикими_фоссами:
+                        _animals.Add(new Fossa());
+                        break;
+                }
+            }
+        }
+
+        public void ShowInfoAboutAviary()
+        {
+            Console.WriteLine($"\nВы подошли к вольеру с {KindAnimals}.\n" +
+                $"В вольере {CountAnimals} животных.\n");
+            for (int i = 0; i < CountAnimals; i++)
+            {
+                _animals[i].ShowInfo();
+            }
+        }
+        
+    }
+
+    abstract class Animal
+    {
+        static private Random _random = new Random();
+        public string Sex { get; private set; }
+        public string Sound { get; private set; }
+
+        public Animal(string sound )
+        {
+            Sex = _random.Next(0, 2) == 0 ? "Мальчик" : "Деочка";
+            Sound = sound;
+        }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine($"Пол животного: {Sex}\n" +
+                              $"Звук животного: {Sound}\n" +
+                              $"------------------------");
+        }
+    }
+
+    class Fox : Animal
+    {
+        public Fox() : base ("Фыр-фыр"){ }
+    }
+
+    class Lion : Animal
+    {
+        public Lion() : base ("Рычит"){ }
+    }
+
+    class Penguin : Animal
+    {
+        public Penguin() : base ("Улыбаемся и машем"){ }
+    }
+
+    class Monkey : Animal
+    {
+        public Monkey() : base ("Ууу аа"){ }
+    }
+
+    class Zebra : Animal
+    {
+        public Zebra() : base ("Ий ий ий"){ }
+    }
+
+    class Giraffe : Animal
+    {
+        public Giraffe() : base ("Чавк чавк"){ }
+    }
+
+    class Hippopotamus : Animal
+    {
+        public Hippopotamus() : base ("Люблю больших люблю бомбастых..."){ }
+    }
+
+    class Lemur : Animal
+    {
+        public Lemur() : base ("I like to move it, move it") { }
+    }
+
+    class Fossa : Animal
+    {
+        public Fossa() : base ("Урчат"){ }
+    }
+
+    enum KindAnimals
+    {
+        Лисами = 1,
+        Львами = 2,
+        Пингвинами = 3,
+        Обезьянами = 4,
+        Зебрами = 5,
+        Жирафами = 6,
+        Бегемотами = 7,
+        Лемурами = 8,
+        Дикими_фоссами = 9
+    }
+}
