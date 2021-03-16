@@ -1,0 +1,82 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Amnesty
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            List<Prisoner> prisoners = new List<Prisoner> { 
+                new Prisoner("Асакура Зик"), 
+                new Prisoner("Ханма Юдзиро"), 
+                new Prisoner("Шодан"), 
+                new Prisoner("Агент Смит"), 
+                new Prisoner("Рой Батти"), 
+                new Prisoner("Чарльз Монтгомери Бернс"), 
+                new Prisoner("Антон Чигру"), 
+                new Prisoner("Доктор Дум"), 
+                new Prisoner("Джокер"), 
+                new Prisoner("Остап Бендер"), 
+                new Prisoner("Планктон"), 
+                new Prisoner("Эрик Картман"), 
+                new Prisoner("Эдвард Тич"), 
+                new Prisoner("Гэндо Икари"), 
+                new Prisoner("Дарт Мол"), 
+                new Prisoner("Мадара Учиха"), 
+                new Prisoner("Аль Капоне"), 
+                new Prisoner("Кевин Томпсон") };
+
+            foreach (var prisoner in prisoners)
+            {
+                prisoner.ShowInfo();
+            }
+
+            Console.WriteLine("\nПрезидент нашей славной страны Арстоцка решил амнистировать всех людей совершивших Антиправительственное преступление!\n");
+
+            var amnestyPrisoner = from Prisoner prisoner in prisoners
+                                  where prisoner.Crime != "Антиправительственное"
+                                  select prisoner;
+
+            foreach (var prisoner in amnestyPrisoner)
+            {
+                prisoner.ShowInfo();
+            }
+        }
+    }
+
+    class Prisoner
+    {
+        private static Random _random = new Random();
+
+        public string FullName { get; private set; }
+        public string Crime { get; private set; }
+
+        public Prisoner(string fullName)
+        {
+            FullName = fullName;
+            switch (_random.Next(1, 4))
+            {
+                case 1:
+                    Crime = "Убийство";
+                    break;
+                case 2:
+                    Crime = "Антиправительственное";
+                    break;
+                case 3:
+                    Crime = "Кража";
+                    break;
+            }
+        }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine($"ФИО заключенного: {FullName}\n" +
+                $"Совершенное преступление: {Crime}\n" +
+                $"---------------------------------------");
+        }
+    }
+}
