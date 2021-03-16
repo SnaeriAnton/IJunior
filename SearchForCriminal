@@ -1,0 +1,139 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace SearchForCriminal
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int growth, weight;
+            string nationality, userinput;
+            bool isOpen = false;
+            List<Criminal> criminals = new List<Criminal>{ 
+                new Criminal("Ягами Лайт", 182, 63), 
+                new Criminal("Асакура Зик", 176, 58), 
+                new Criminal("Гэндо Икари", 200, 71), 
+                new Criminal("Аль Капоне", 206, 92), 
+                new Criminal("Остап Бендер", 179, 108), 
+                new Criminal("Эдвард Тич", 190, 89), 
+                new Criminal("Ганнибал Лектор", 154, 92), 
+                new Criminal("Джокер", 171, 110), 
+                new Criminal("Норман Озборн", 184, 64), 
+                new Criminal("Кевин Томпсон", 150, 51), 
+                new Criminal("Ханма Юдзиро", 197, 67), 
+                new Criminal("Дарт Мол", 158, 76), 
+                new Criminal("Шодан", 187, 79), 
+                new Criminal("Агент Смит", 167, 76), 
+                new Criminal("Джек Торренс", 202, 60), 
+                new Criminal("Долорес Амбридж", 154, 98), 
+                new Criminal("Васс Монтенегро", 189, 67), 
+                new Criminal("Король-Лич", 153, 76), 
+                new Criminal("HAL 9000", 156, 79), 
+                new Criminal("Рой Батти", 203, 76), 
+                new Criminal("Чарльз Монтгомери Бернс", 153, 60), 
+                new Criminal("Антон Чигру", 165, 98), 
+                new Criminal("Доктор Дум", 172, 67), 
+                new Criminal("Дарт Вейдер",199, 86), 
+                new Criminal("Мадара Учиха", 198, 87), 
+                new Criminal("Эрик Картман", 206, 70), 
+                new Criminal("Аку", 171, 71), 
+                new Criminal("Планктон", 157, 87), 
+                new Criminal("Эрен Йегер", 177, 52) };
+
+            while (isOpen == false)
+            {
+                Console.Write("Добро пожаловать Детектив.\n" +
+                "Введите рост: ");
+                growth = GetInt();
+                Console.Write("Введите вес: ");
+                weight = GetInt();
+                Console.Write("Введите Национальность: ");
+                nationality = Console.ReadLine();
+
+                var foundCriminals = from Criminal criminal in criminals
+                                     where criminal.Growth == growth && criminal.Weight == weight && criminal.Nationality == nationality && criminal.Concluded == false
+                                     select criminal;
+
+                foreach (var criminal in foundCriminals)
+                {
+                    criminal.ShowInfo();
+                }
+
+                Console.WriteLine("Закрыть программу? введите Да");
+                userinput = Console.ReadLine();
+                if (userinput == "Да")
+                {
+                    isOpen = true;
+                }
+            }
+        }
+
+       static public int GetInt()
+        {
+            int number = 0;
+            bool resultConvert = false;
+            while (resultConvert == false)
+            {
+                resultConvert = int.TryParse(Console.ReadLine(), out number);
+                if (resultConvert == true && number > 0)
+                {
+                    return number;
+                }
+                else
+                {
+                    Console.WriteLine("Вы ввели не корректное значение. Попробуйте еще раз.");
+                    resultConvert = false;
+                }
+            }
+            return number;
+        }
+    }
+
+    class Criminal
+    {
+        private static Random _random = new Random();
+
+        public string FullName { get; private set; }
+        public int Growth { get; private set; }
+        public int Weight { get; private set; }
+        public string Nationality { get; private set; }
+        public bool Concluded { get; private set; }
+
+        public Criminal(string fullName, int growth, int weight)
+        {
+            FullName = fullName;
+            Growth = growth;
+            Weight = weight;
+            switch (_random.Next(1, 6))
+            {
+                case 1:
+                    Nationality = "Русский";
+                    break;
+                case 2:
+                    Nationality = "Япониц";
+                    break;
+                case 3:
+                    Nationality = "Американец";
+                    break;
+                case 4:
+                    Nationality = "Казх";
+                    break;
+                case 5:
+                    Nationality = "Немец";
+                    break;
+            }
+            Concluded = _random.Next(0, 2) == 1 ? true : false;
+        }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine($"ФМО: {FullName}\n" +
+                $"Рост: {Growth}\n" +
+                $"Вес: {Weight}\n" +
+                $"Национальность: {Concluded}\n" +
+                $"-----------------------");
+        }
+    }
+}
