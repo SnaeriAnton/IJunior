@@ -1,0 +1,153 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace hospital
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Hospital hospital = new Hospital();
+            hospital.WorkHospital();
+        }
+    }
+
+    class Hospital
+    {
+        private List<Sick> _sick = new List<Sick>();
+
+        public Hospital()
+        {
+            _sick.Add(new Sick("Асакура Зик"));
+            _sick.Add(new Sick("Джокер"));
+            _sick.Add(new Sick("Кевин Томпсон"));
+            _sick.Add(new Sick("Ханма Юдзиро"));
+            _sick.Add(new Sick("Дарт Мол"));
+            _sick.Add(new Sick("Агент Смит"));
+            _sick.Add(new Sick("Джек Торренс"));
+            _sick.Add(new Sick("HAL 9000"));
+            _sick.Add(new Sick("Доктор Дум"));
+            _sick.Add(new Sick("Дарт Вейдер"));
+            _sick.Add(new Sick("Мадара Учиха"));
+            _sick.Add(new Sick("Эрик Картман"));
+            _sick.Add(new Sick("Аку"));
+            _sick.Add(new Sick("Планктон"));
+            _sick.Add(new Sick("Остап Бендер"));
+        }
+
+        public void WorkHospital()
+        {
+            bool isOpen = true;
+            string userInput = " ";
+            int menuNumber = 0;
+            while (isOpen == true)
+            {
+                Console.Write("1.Отсортировать всех больных по ФИО.\n" +
+                    "2.Отсортировать всех больных по возрасту.\n" +
+                    "3.Вывести больных с определенным заболеванием.\n" +
+                    "Выберите пункт меню: ");
+                menuNumber = GetUmber();
+                switch (menuNumber)
+                {
+                    case 1:
+                        var orderBySickFullName = _sick.OrderBy(sick => sick.FullName).ToList();
+                        GetOrderBy("Все больные отсартированны по ФИО.", orderBySickFullName);
+                        break;
+                    case 2:
+                        var orderBySick = _sick.OrderBy(sick => sick.Age).ToList();
+                        GetOrderBy("Все больные отсартированны по возросту.", orderBySick);
+                        break;
+                    case 3:
+                        Console.Write("Введите название болезни: ");
+                        userInput = Console.ReadLine();
+                        var disease = _sick.Where(sick => sick.Disease == userInput).ToList();
+                        GetOrderBy($"Все больные с {userInput}", disease);
+                        break;
+                }
+                Console.WriteLine("Закрыть больницу? Введите Да");
+                userInput = Console.ReadLine();
+                if (userInput == "Да")
+                {
+                    isOpen = false;
+                }
+            }
+        }
+
+        private void GetOrderBy(string message, List<Sick> newList)
+        {
+            foreach (var sick in newList)
+            {
+                sick.ShowInfo();
+            }
+            Console.WriteLine(message);
+        }
+
+        private int GetUmber()
+        {
+            int number = 0;
+            bool resultConvert = false;
+            while (resultConvert == false)
+            {
+                resultConvert = int.TryParse(Console.ReadLine(), out number);
+                if (resultConvert == true && number > 0 && number <= 3)
+                {
+                    return number;
+                }
+                else
+                {
+                    Console.WriteLine("Вы ввели не корректное значение. Попробуйте еще раз.");
+                    resultConvert = false;
+                }
+            }
+            return number;
+        }
+    }
+
+    class Sick
+    {
+        private static Random _random = new Random();
+
+        public string FullName { get; private set; }
+        public int Age { get; private set; }
+        public string Disease { get; private set; }
+
+        public Sick(string fullname)
+        {
+            FullName = fullname;
+            Age = _random.Next(0, 78);
+            switch (_random.Next(1, 7))
+            {
+                case 1:
+                    Disease = "Рак";
+                    break;
+                case 2:
+                    Disease = "Перелом";
+                    break;
+                case 3:
+                    Disease = "Пересадка органа";
+                    break;
+                case 4:
+                    Disease = "Амнезия";
+                    break;
+                case 5:
+                    Disease = "Пулевое ранение";
+                    break;
+                case 6:
+                    Disease = "Легочная недостаточность";
+                    break;
+            }
+        }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine($"\nКарточка больного.\n" +
+                $"ФИО: {FullName}\n" +
+                $"Возраст: {Age}\n" +
+                $"Диагноз: {Disease}\n" +
+                $"------------------------");
+        }
+    }
+}
