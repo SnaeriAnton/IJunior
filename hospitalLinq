@@ -11,34 +11,34 @@ namespace hospital
         static void Main(string[] args)
         {
             Hospital hospital = new Hospital();
-            hospital.WorkHospital();
+            hospital.Work();
         }
     }
 
     class Hospital
     {
-        private List<Sick> _sick = new List<Sick>();
+        private List<Sick> _sickPeople = new List<Sick>();
 
         public Hospital()
         {
-            _sick.Add(new Sick("Асакура Зик"));
-            _sick.Add(new Sick("Джокер"));
-            _sick.Add(new Sick("Кевин Томпсон"));
-            _sick.Add(new Sick("Ханма Юдзиро"));
-            _sick.Add(new Sick("Дарт Мол"));
-            _sick.Add(new Sick("Агент Смит"));
-            _sick.Add(new Sick("Джек Торренс"));
-            _sick.Add(new Sick("HAL 9000"));
-            _sick.Add(new Sick("Доктор Дум"));
-            _sick.Add(new Sick("Дарт Вейдер"));
-            _sick.Add(new Sick("Мадара Учиха"));
-            _sick.Add(new Sick("Эрик Картман"));
-            _sick.Add(new Sick("Аку"));
-            _sick.Add(new Sick("Планктон"));
-            _sick.Add(new Sick("Остап Бендер"));
+            _sickPeople.Add(new Sick("Асакура Зик"));
+            _sickPeople.Add(new Sick("Джокер"));
+            _sickPeople.Add(new Sick("Кевин Томпсон"));
+            _sickPeople.Add(new Sick("Ханма Юдзиро"));
+            _sickPeople.Add(new Sick("Дарт Мол"));
+            _sickPeople.Add(new Sick("Агент Смит"));
+            _sickPeople.Add(new Sick("Джек Торренс"));
+            _sickPeople.Add(new Sick("HAL 9000"));
+            _sickPeople.Add(new Sick("Доктор Дум"));
+            _sickPeople.Add(new Sick("Дарт Вейдер"));
+            _sickPeople.Add(new Sick("Мадара Учиха"));
+            _sickPeople.Add(new Sick("Эрик Картман"));
+            _sickPeople.Add(new Sick("Аку"));
+            _sickPeople.Add(new Sick("Планктон"));
+            _sickPeople.Add(new Sick("Остап Бендер"));
         }
 
-        public void WorkHospital()
+        public void Work()
         {
             bool isOpen = true;
             string userInput = " ";
@@ -49,22 +49,22 @@ namespace hospital
                     "2.Отсортировать всех больных по возрасту.\n" +
                     "3.Вывести больных с определенным заболеванием.\n" +
                     "Выберите пункт меню: ");
-                menuNumber = GetUmber();
+                menuNumber = GetNumber();
                 switch (menuNumber)
                 {
                     case 1:
-                        var orderBySickFullName = _sick.OrderBy(sick => sick.FullName).ToList();
-                        GetOrderBy("Все больные отсартированны по ФИО.", orderBySickFullName);
+                        var orderBySickFullName = _sickPeople.OrderBy(sick => sick.FullName).ToList();
+                        ShowSickPeople("Все больные отсартированны по ФИО.", orderBySickFullName);
                         break;
                     case 2:
-                        var orderBySick = _sick.OrderBy(sick => sick.Age).ToList();
-                        GetOrderBy("Все больные отсартированны по возросту.", orderBySick);
+                        var orderBySick = _sickPeople.OrderBy(sick => sick.Age).ToList();
+                        ShowSickPeople("Все больные отсартированны по возросту.", orderBySick);
                         break;
                     case 3:
                         Console.Write("Введите название болезни: ");
                         userInput = Console.ReadLine();
-                        var disease = _sick.Where(sick => sick.Disease == userInput).ToList();
-                        GetOrderBy($"Все больные с {userInput}", disease);
+                        var disease = _sickPeople.Where(sick => sick.Disease == userInput).ToList();
+                        ShowSickPeople($"Все больные с {userInput}", disease);
                         break;
                 }
                 Console.WriteLine("Закрыть больницу? Введите Да");
@@ -76,7 +76,7 @@ namespace hospital
             }
         }
 
-        private void GetOrderBy(string message, List<Sick> newList)
+        private void ShowSickPeople(string message, List<Sick> newList)
         {
             foreach (var sick in newList)
             {
@@ -85,7 +85,7 @@ namespace hospital
             Console.WriteLine(message);
         }
 
-        private int GetUmber()
+        private int GetNumber()
         {
             int number = 0;
             bool resultConvert = false;
