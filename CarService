@@ -11,18 +11,20 @@ namespace CarService
         static void Main(string[] args)
         {
             CarService carService = new CarService();
-            carService.WorkCarService();
+            carService.Work();
         }
     }
 
     class CarService
     {
 
-        private Engine engine = new Engine();
-        private Carburetor carburetor = new Carburetor();
-        private Windshiekd windshiekd = new Windshiekd();
-        private Wheel wheel = new Wheel();
-        private Oil oil = new Oil();
+        private Engine _engine = new Engine();
+        private Carburetor _carburetor = new Carburetor();
+        private Windshiekd _windshiekd = new Windshiekd();
+        private Wheel _wheel = new Wheel();
+        private Oil _oil = new Oil();
+
+        private Dictionary<CarPart, SparePart> _sparePartsPrice = new Dictionary<CarPart, SparePart>();
         private int _balance;
         private Warehouse _warehouse;
 
@@ -30,55 +32,69 @@ namespace CarService
         {
             _balance = 500;
             _warehouse = new Warehouse();
+            for (int i = 0; i < 5; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        _sparePartsPrice.Add((CarPart)1 + i, new Carburetor());
+                        break;
+                    case 1:
+                        _sparePartsPrice.Add((CarPart)1 + i, new Wheel());
+                        break;
+                    case 2:
+                        _sparePartsPrice.Add((CarPart)1 + i, new Windshiekd());
+                        break;
+                    case 3:
+                        _sparePartsPrice.Add((CarPart)1 + i, new Oil());
+                        break;
+                    case 4:
+                        _sparePartsPrice.Add((CarPart)1 + i, new Engine());
+                        break;
+                }
+            }
         }
 
-        public void WorkCarService()
+        public void Work()
         {
-            CarParts masterInput;
-            bool resultCheck;
-            int ChoiceSparePartMaster = 0;
+            CarPart masterInput;
+            bool resultCheck, CheckAvailabilitySparePart;
             while (_balance >= 0)
             {
                 Console.WriteLine($"Добро пожаловать в автосервис.\n" +
-                    $"Баланс автосалона: {_balance}\n" +
-                    $"Список запчастей на складе:\n" +
-                    $"{CarParts.карбюратор}: {_warehouse.CountCarburetors}, " +
-                    $"{CarParts.колесо}: {_warehouse.CountWheels}, " +
-                    $"{CarParts.лобовое_стекло}: {_warehouse.CountWindshiekds}, " +
-                    $"{CarParts.масло}: {_warehouse.CountOil}, " +
-                    $"{CarParts.двигатель}: {_warehouse.CountEngines}, \n");
+                    $"Баланс автосалона: {_balance}\n");
+                _warehouse.ShowInfo();
 
                 Client client = new Client();
-                Console.WriteLine($"Клиенту нужно заменить: {client.NameDefect}\n");
-                GetPriceWarehouse(client.NameDefect);
+                Console.WriteLine($"\nКлиенту нужно заменить: {client.NameDefect}\n");
+                _sparePartsPrice[client.NameDefect].ShowInfo();
                 Console.WriteLine($"Выберите деталь для замены:\n" +
-                    $"1.{CarParts.карбюратор}\n" +
-                    $"2.{CarParts.колесо}\n" +
-                    $"3.{CarParts.лобовое_стекло}\n" +
-                    $"4.{CarParts.масло}\n" +
-                    $"5.{CarParts.двигатель}");
+                    $"1.{CarPart.carburetor}\n" +
+                    $"2.{CarPart.wheel}\n" +
+                    $"3.{CarPart.windshiekd}\n" +
+                    $"4.{CarPart.oil}\n" +
+                    $"5.{CarPart.engine}");
 
-                masterInput = (CarParts)GetNumber();
-                if (_warehouse.CheckSpareParts(masterInput))
+                masterInput = (CarPart)GetNumber();
+                CheckAvailabilitySparePart = _warehouse.CheckSpareParts(masterInput);
+                if (CheckAvailabilitySparePart)
                 {
-                    ChoiceSparePartMaster = _warehouse.TakeSparePartWithWarehouse(masterInput);
+                    _warehouse.TakeSparePartWithWarehouse(masterInput);
                 }
-                
+
                 resultCheck = client.NameDefect == masterInput ? true : false;
 
-                if (resultCheck)
+                if (resultCheck && CheckAvailabilitySparePart)
                 {
-                    Console.WriteLine($"Вы заработали {GetMoney(client.NameDefect)}");
-                    _balance += GetMoney(client.NameDefect);
+                    Console.WriteLine($"Вы заработали {_sparePartsPrice[client.NameDefect].GetAmountForWork()}");
+                    _balance += _sparePartsPrice[client.NameDefect].GetAmountForWork();
                 }
                 else
                 {
                     Console.WriteLine($"Ваша работа не удовлетворила клиента вы должны выплотить ему штраф в двойном размере.\n" +
-                        $"Сумма штрафа составляет: {GetMoney(client.NameDefect) * 2}");
-                    _balance -= GetMoney(client.NameDefect) * 2;
+                        $"Сумма штрафа составляет: {_sparePartsPrice[client.NameDefect].GetAmountForWork() * 2}");
+                    _balance -= _sparePartsPrice[client.NameDefect].GetAmountForWork() * 2;
                 }
-
-                _warehouse.SetupSparePart(ChoiceSparePartMaster);
 
                 Console.ReadKey();
                 Console.Clear();
@@ -106,169 +122,64 @@ namespace CarService
             }
             return number;
         }
-
-        private int GetMoney(CarParts nameDefect)
-        {
-            switch (nameDefect)
-            {
-                case CarParts.двигатель:
-                    return engine.GetAmountForWork();
-                case CarParts.карбюратор:
-                    return carburetor.GetAmountForWork();
-                case CarParts.лобовое_стекло:
-                    return windshiekd.GetAmountForWork();
-                case CarParts.колесо:
-                    return wheel.GetAmountForWork();
-                case CarParts.масло:
-                    return oil.GetAmountForWork();
-            }
-            return 0;
-        }
-
-        private void GetPriceWarehouse(CarParts nameDefect)
-        {
-            switch (nameDefect)
-            {
-                case CarParts.двигатель:
-                    engine.ShowInfoSparePart();
-                    break;
-                case CarParts.карбюратор:
-                    carburetor.ShowInfoSparePart();
-                    break;
-                case CarParts.лобовое_стекло:
-                    windshiekd.ShowInfoSparePart();
-                    break;
-                case CarParts.колесо:
-                    wheel.ShowInfoSparePart();
-                    break;
-                case CarParts.масло:
-                    oil.ShowInfoSparePart();
-                    break;
-            }
-        }
     }
 
     class Warehouse
     {
-        private static Random _random = new Random();
-        private List<SparePart> _spareParts = new List<SparePart>();
 
-        public int CountCarburetors { get; private set; }
-        public int CountWheels { get; private set; }
-        public int CountWindshiekds { get; private set; }
-        public int CountOil { get; private set; }
-        public int CountEngines { get; private set; }
+        private static Random _random = new Random();
+        private Dictionary<CarPart, int> _spareParts = new Dictionary<CarPart, int>();
 
         public Warehouse()
         {
-            int sparePartsOnWarehouse = 5;
-            int maxSpareParts = 6;
-            for (int i = 0; i < sparePartsOnWarehouse; i++)
+            int carParts = 5;
+            for (int i = 0; i < carParts; i++)
             {
-                int quantitySpareParts = _random.Next(0, maxSpareParts + 5 + i);
-                for (int j = 0; j < quantitySpareParts; j++)
-                {
-                    switch (i)
-                    {
-                        case 0:
-                            CountEngines = quantitySpareParts;
-                            _spareParts.Add(new Engine());
-                            break;
-                        case 1:
-                            CountCarburetors = quantitySpareParts;
-                            _spareParts.Add(new Carburetor());
-                            break;
-                        case 2:
-                            CountWindshiekds = quantitySpareParts;
-                            _spareParts.Add(new Windshiekd());
-                            break;
-                        case 3:
-                            CountWheels = quantitySpareParts;
-                            _spareParts.Add(new Wheel());
-                            break;
-                        case 4:
-                            CountOil = quantitySpareParts;
-                            _spareParts.Add(new Oil());
-                            break;
-                    }
-                }
+                _spareParts.Add(((CarPart)1 + i), _random.Next(0, 10));
             }
         }
 
-        public void SetupSparePart(int sparePart)
+        public void ShowInfo()
         {
-            _spareParts.RemoveAt(sparePart);
+            Console.WriteLine("Список запчастей на складе:\n");
+            foreach (var sparePart in _spareParts)
+            {
+                Console.WriteLine(sparePart.Key +": "+ sparePart.Value);
+            }
         }
 
-        public bool CheckSpareParts(CarParts nameDefect)
+        public bool CheckSpareParts(CarPart nameDefect)
         {
-            switch (nameDefect)
+            foreach (var sparePart in _spareParts)
             {
-                case CarParts.двигатель:
-                    return CheckAvailabilitySparePartOnWaregouse(CountEngines);
-                case CarParts.карбюратор:
-                    return CheckAvailabilitySparePartOnWaregouse(CountCarburetors);
-                case CarParts.лобовое_стекло:
-                    return CheckAvailabilitySparePartOnWaregouse(CountWindshiekds);
-                case CarParts.колесо:
-                    return CheckAvailabilitySparePartOnWaregouse(CountWheels);
-                case CarParts.масло:
-                    return CheckAvailabilitySparePartOnWaregouse(CountOil);
+                if (sparePart.Key == nameDefect)
+                {
+                    bool resultChecks = true;
+                    if (sparePart.Value == 0)
+                    {
+                        Console.WriteLine("У вас не достаточно деталей");
+                        resultChecks = false;
+                    }
+                    return resultChecks;
+                }
             }
             return false;
         }
 
-        public int TakeSparePartWithWarehouse(CarParts choiceOfmaster)
+        public void TakeSparePartWithWarehouse(CarPart choiceOfmaster)
         {
-            int resultFind = 0;
-            for (int i = 0; i < _spareParts.Count; i++)
-            {
-                if (_spareParts[i].Name == choiceOfmaster)
-                {
-                    resultFind = i;
-                    switch (choiceOfmaster)
-                    {
-                        case CarParts.двигатель:
-                            CountEngines--;
-                            return resultFind;
-                        case CarParts.карбюратор:
-                            CountCarburetors--;
-                            return resultFind;
-                        case CarParts.лобовое_стекло:
-                            CountWindshiekds--;
-                            return resultFind;
-                        case CarParts.колесо:
-                            CountWheels--;
-                            return resultFind;
-                        case CarParts.масло:
-                            CountOil--;
-                            return resultFind;
-                    }
-                }
-            }
-            return 0;
-        }
-
-        private bool CheckAvailabilitySparePartOnWaregouse(int countSpareParts)
-        {
-            bool resultChecks = true;
-            if (countSpareParts == 0)
-            {
-                Console.WriteLine("У вас не достаточно деталей");
-                resultChecks = false;
-            }
-            return resultChecks;
+            _spareParts[choiceOfmaster]--;
         }
     }
 
     abstract class SparePart
     {
-        public CarParts Name { get; private set; }
+        public string Name { get; private set; }
         public int PriceItem { get; private set; } 
         public int PriceWork { get; private set; } 
         public int AmountForWork { get; private set; }
 
-        public SparePart(CarParts name, int priceItem, int priceWork)
+        public SparePart(string name, int priceItem, int priceWork)
         {
             Name = name;
             PriceItem = priceItem;
@@ -276,7 +187,7 @@ namespace CarService
             AmountForWork = PriceItem + PriceWork;
         }
 
-        public void ShowInfoSparePart()
+        public void ShowInfo()
         {
             Console.WriteLine($"Цена за запчасть: {PriceItem}\n" +
                 $"Цена за работу: {PriceWork}\n" +
@@ -291,70 +202,70 @@ namespace CarService
 
     class Carburetor : SparePart
     {
-        public Carburetor() : base(CarParts.карбюратор, 600, 400){ }
+        public Carburetor() : base("карбюратор", 600, 400){ }
     }
 
     class Wheel : SparePart
     {
-        public Wheel() : base(CarParts.колесо, 500, 150) { }
+        public Wheel() : base("колесо", 500, 150) { }
     }
 
     class Windshiekd : SparePart
     {
-        public Windshiekd() : base(CarParts.лобовое_стекло, 300, 250){ }
+        public Windshiekd() : base("Лобовое стекло", 300, 250){ }
     }
 
     class Oil : SparePart
     {
-        public Oil() : base(CarParts.масло, 50, 200){ }
+        public Oil() : base("Масло", 50, 200){ }
     }
 
     class Engine : SparePart
     {
-        public Engine() : base(CarParts.двигатель, 8000, 1000){ }
+        public Engine() : base("Двигатель", 8000, 1000){ }
     }
 
     class Client
     {
         private static Random _random = new Random();
-        public CarParts NameDefect { get; private set; }
+        public CarPart NameDefect { get; private set; }
 
         public Client()
         {
-            NameDefect = CreatгуDefect(_random.Next(1, 6));
+            NameDefect = CreaterDefect(_random.Next(1, 6));
         }
 
-        private CarParts CreatгуDefect(int _random)
+        private CarPart CreaterDefect(int _random)
         {
-            CarParts name = CarParts.двигатель;
+            CarPart name = CarPart.engine;
             switch (_random)
             {
                 case 1:
-                    name = CarParts.карбюратор;
+                    name = CarPart.carburetor;
                     break;
                 case 2:
-                    name = CarParts.колесо;
+                    name = CarPart.wheel;
                     break;
                 case 3:
-                    name = CarParts.лобовое_стекло;
+                    name = CarPart.windshiekd;
                     break;
                 case 4:
-                    name = CarParts.масло;
+                    name = CarPart.oil;
                     break;
                 case 5:
-                    name = CarParts.двигатель;
+                    name = CarPart.engine;
                     break;
             }
             return  name;
         }
     }
 
-    enum CarParts
+    enum CarPart
     {
-        карбюратор = 1,
-        колесо = 2,
-        лобовое_стекло = 3,
-        масло = 4,
-        двигатель = 5
+        carburetor = 1,
+        wheel = 2,
+        windshiekd = 3,
+        oil = 4,
+        engine = 5
     }
 }
