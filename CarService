@@ -17,16 +17,10 @@ namespace CarService
 
     class CarService
     {
-
-        private Engine _engine = new Engine();
-        private Carburetor _carburetor = new Carburetor();
-        private Windshiekd _windshiekd = new Windshiekd();
-        private Wheel _wheel = new Wheel();
-        private Oil _oil = new Oil();
-
         private Dictionary<CarPart, SparePart> _sparePartsPrice = new Dictionary<CarPart, SparePart>();
         private int _balance;
         private Warehouse _warehouse;
+        private int _maxClientInDay;
 
         public CarService()
         {
@@ -52,14 +46,18 @@ namespace CarService
                         _sparePartsPrice.Add((CarPart)1 + i, new Engine());
                         break;
                 }
+                _maxClientInDay = 2;
             }
         }
 
         public void Work()
         {
             CarPart masterInput;
-            bool resultCheck, CheckAvailabilitySparePart;
-            while (_balance >= 0)
+            bool resultCheck;
+            bool CheckAvailabilitySparePart;
+            int sumFine;
+            string message;
+            while (_balance >= 0 && _maxClientInDay > 0)
             {
                 Console.WriteLine($"Добро пожаловать в автосервис.\n" +
                     $"Баланс автосалона: {_balance}\n");
@@ -79,28 +77,29 @@ namespace CarService
                 CheckAvailabilitySparePart = _warehouse.CheckSpareParts(masterInput);
                 if (CheckAvailabilitySparePart)
                 {
-                    _warehouse.TakeSparePartWithWarehouse(masterInput);
+                    _warehouse.TakeSparePart(masterInput);
                 }
 
                 resultCheck = client.NameDefect == masterInput ? true : false;
 
                 if (resultCheck && CheckAvailabilitySparePart)
                 {
-                    Console.WriteLine($"Вы заработали {_sparePartsPrice[client.NameDefect].GetAmountForWork()}");
-                    _balance += _sparePartsPrice[client.NameDefect].GetAmountForWork();
+                    Console.WriteLine($"Вы заработали {_sparePartsPrice[client.NameDefect].AmountForWork}");
+                    _balance += _sparePartsPrice[client.NameDefect].AmountForWork;
                 }
                 else
                 {
+                    sumFine = _sparePartsPrice[client.NameDefect].AmountForWork * 2;
                     Console.WriteLine($"Ваша работа не удовлетворила клиента вы должны выплотить ему штраф в двойном размере.\n" +
-                        $"Сумма штрафа составляет: {_sparePartsPrice[client.NameDefect].GetAmountForWork() * 2}");
-                    _balance -= _sparePartsPrice[client.NameDefect].GetAmountForWork() * 2;
+                        $"Сумма штрафа составляет: {sumFine}");
+                    _balance -= sumFine;
                 }
-
+                _maxClientInDay--;
                 Console.ReadKey();
                 Console.Clear();
-
             }
-            Console.WriteLine("Вы начали работать в убыток и вам пришлось закрыться.");
+            message = _maxClientInDay == 0 ? $"Рабочий день закончен вы заработали за сегодня {_balance}" : "Вы начали работать в убыток и вам пришлось закрыться.";
+            Console.WriteLine(message);
         }
 
         private int GetNumber()
@@ -126,7 +125,6 @@ namespace CarService
 
     class Warehouse
     {
-
         private static Random _random = new Random();
         private Dictionary<CarPart, int> _spareParts = new Dictionary<CarPart, int>();
 
@@ -144,29 +142,21 @@ namespace CarService
             Console.WriteLine("Список запчастей на складе:\n");
             foreach (var sparePart in _spareParts)
             {
-                Console.WriteLine(sparePart.Key +": "+ sparePart.Value);
+                Console.WriteLine(sparePart.Key + ": " + sparePart.Value);
             }
         }
 
         public bool CheckSpareParts(CarPart nameDefect)
         {
-            foreach (var sparePart in _spareParts)
+            bool resultChecks = _spareParts[nameDefect] == 0 ? false : true;
+            if (resultChecks == false)
             {
-                if (sparePart.Key == nameDefect)
-                {
-                    bool resultChecks = true;
-                    if (sparePart.Value == 0)
-                    {
-                        Console.WriteLine("У вас не достаточно деталей");
-                        resultChecks = false;
-                    }
-                    return resultChecks;
-                }
+                Console.WriteLine("У вас не достаточно деталей");
             }
-            return false;
+            return resultChecks;
         }
 
-        public void TakeSparePartWithWarehouse(CarPart choiceOfmaster)
+        public void TakeSparePart(CarPart choiceOfmaster)
         {
             _spareParts[choiceOfmaster]--;
         }
@@ -175,8 +165,8 @@ namespace CarService
     abstract class SparePart
     {
         public string Name { get; private set; }
-        public int PriceItem { get; private set; } 
-        public int PriceWork { get; private set; } 
+        public int PriceItem { get; private set; }
+        public int PriceWork { get; private set; }
         public int AmountForWork { get; private set; }
 
         public SparePart(string name, int priceItem, int priceWork)
@@ -202,7 +192,7 @@ namespace CarService
 
     class Carburetor : SparePart
     {
-        public Carburetor() : base("карбюратор", 600, 400){ }
+        public Carburetor() : base("карбюратор", 600, 400) { }
     }
 
     class Wheel : SparePart
@@ -212,17 +202,17 @@ namespace CarService
 
     class Windshiekd : SparePart
     {
-        public Windshiekd() : base("Лобовое стекло", 300, 250){ }
+        public Windshiekd() : base("Лобовое стекло", 300, 250) { }
     }
 
     class Oil : SparePart
     {
-        public Oil() : base("Масло", 50, 200){ }
+        public Oil() : base("Масло", 50, 200) { }
     }
 
     class Engine : SparePart
     {
-        public Engine() : base("Двигатель", 8000, 1000){ }
+        public Engine() : base("Двигатель", 8000, 1000) { }
     }
 
     class Client
@@ -232,31 +222,24 @@ namespace CarService
 
         public Client()
         {
-            NameDefect = CreaterDefect(_random.Next(1, 6));
-        }
-
-        private CarPart CreaterDefect(int _random)
-        {
-            CarPart name = CarPart.engine;
-            switch (_random)
+            switch (_random.Next(1, 6))
             {
                 case 1:
-                    name = CarPart.carburetor;
+                    NameDefect = CarPart.carburetor;
                     break;
                 case 2:
-                    name = CarPart.wheel;
+                    NameDefect = CarPart.wheel;
                     break;
                 case 3:
-                    name = CarPart.windshiekd;
+                    NameDefect = CarPart.windshiekd;
                     break;
                 case 4:
-                    name = CarPart.oil;
+                    NameDefect = CarPart.oil;
                     break;
                 case 5:
-                    name = CarPart.engine;
+                    NameDefect = CarPart.engine;
                     break;
             }
-            return  name;
         }
     }
 
