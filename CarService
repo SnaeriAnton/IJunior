@@ -26,28 +26,14 @@ namespace CarService
         {
             _balance = 500;
             _warehouse = new Warehouse();
-            for (int i = 0; i < 5; i++)
-            {
-                switch (i)
-                {
-                    case 0:
-                        _sparePartsPrice.Add((CarPart)1 + i, new Carburetor());
-                        break;
-                    case 1:
-                        _sparePartsPrice.Add((CarPart)1 + i, new Wheel());
-                        break;
-                    case 2:
-                        _sparePartsPrice.Add((CarPart)1 + i, new Windshiekd());
-                        break;
-                    case 3:
-                        _sparePartsPrice.Add((CarPart)1 + i, new Oil());
-                        break;
-                    case 4:
-                        _sparePartsPrice.Add((CarPart)1 + i, new Engine());
-                        break;
-                }
-                _maxClientInDay = 2;
-            }
+            _balance = 500;
+            _warehouse = new Warehouse();
+            _sparePartsPrice.Add(CarPart.carburetor, new Carburetor());
+            _sparePartsPrice.Add(CarPart.wheel, new Wheel());
+            _sparePartsPrice.Add(CarPart.windshiekd, new Windshiekd());
+            _sparePartsPrice.Add(CarPart.oil, new Oil());
+            _sparePartsPrice.Add(CarPart.engine, new Engine());
+            _maxClientInDay = 2;
         }
 
         public void Work()
@@ -80,16 +66,16 @@ namespace CarService
                     _warehouse.TakeSparePart(masterInput);
                 }
 
-                resultCheck = client.NameDefect == masterInput ? true : false;
+                resultCheck = client.NameDefect == masterInput;
 
                 if (resultCheck && CheckAvailabilitySparePart)
                 {
-                    Console.WriteLine($"Вы заработали {_sparePartsPrice[client.NameDefect].AmountForWork}");
-                    _balance += _sparePartsPrice[client.NameDefect].AmountForWork;
+                    Console.WriteLine($"Вы заработали {_sparePartsPrice[client.NameDefect].TotalCost}");
+                    _balance += _sparePartsPrice[client.NameDefect].TotalCost;
                 }
                 else
                 {
-                    sumFine = _sparePartsPrice[client.NameDefect].AmountForWork * 2;
+                    sumFine = _sparePartsPrice[client.NameDefect].TotalCost * 2;
                     Console.WriteLine($"Ваша работа не удовлетворила клиента вы должны выплотить ему штраф в двойном размере.\n" +
                         $"Сумма штрафа составляет: {sumFine}");
                     _balance -= sumFine;
@@ -104,22 +90,20 @@ namespace CarService
 
         private int GetNumber()
         {
-            int number = 0;
+            int userNumberInput = 0;
+            int quantityOfSpareParts = 5;
             bool resultConvert = false;
             while (resultConvert == false)
             {
-                resultConvert = int.TryParse(Console.ReadLine(), out number);
-                if (number <= 5 && number > 0)
-                {
-                    break;
-                }
+                resultConvert = int.TryParse(Console.ReadLine(), out userNumberInput);
+                if (userNumberInput <= quantityOfSpareParts && userNumberInput > 0) { }
                 else
                 {
                     Console.WriteLine("Вы ввели не корректное значение попробуйте снова.");
                     resultConvert = false;
                 }
             }
-            return number;
+            return userNumberInput;
         }
     }
 
@@ -167,26 +151,21 @@ namespace CarService
         public string Name { get; private set; }
         public int PriceItem { get; private set; }
         public int PriceWork { get; private set; }
-        public int AmountForWork { get; private set; }
+        public int TotalCost { get; private set; }
 
         public SparePart(string name, int priceItem, int priceWork)
         {
             Name = name;
             PriceItem = priceItem;
             PriceWork = priceWork;
-            AmountForWork = PriceItem + PriceWork;
+            TotalCost = PriceItem + PriceWork;
         }
 
         public void ShowInfo()
         {
             Console.WriteLine($"Цена за запчасть: {PriceItem}\n" +
                 $"Цена за работу: {PriceWork}\n" +
-                $"Общая стоимость: {AmountForWork}\n");
-        }
-
-        public int GetAmountForWork()
-        {
-            return AmountForWork;
+                $"Общая стоимость: {TotalCost}\n");
         }
     }
 
@@ -222,24 +201,7 @@ namespace CarService
 
         public Client()
         {
-            switch (_random.Next(1, 6))
-            {
-                case 1:
-                    NameDefect = CarPart.carburetor;
-                    break;
-                case 2:
-                    NameDefect = CarPart.wheel;
-                    break;
-                case 3:
-                    NameDefect = CarPart.windshiekd;
-                    break;
-                case 4:
-                    NameDefect = CarPart.oil;
-                    break;
-                case 5:
-                    NameDefect = CarPart.engine;
-                    break;
-            }
+            NameDefect = (CarPart)_random.Next(1, 6);
         }
     }
 
