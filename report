@@ -1,0 +1,90 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace report
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            List<Soldier> soldiers = new List<Soldier> {
+                new Soldier("Шодан"),
+                new Soldier("Агент Смит"),
+                new Soldier("Рой Батти"),
+                new Soldier("Чарльз Монтгомери Бернс"),
+                new Soldier("Антон Чигру"),
+                new Soldier("Доктор Дум"),
+                new Soldier("Джокер"),
+                new Soldier("Остап Бендер"),
+                new Soldier("Планктон"),
+                new Soldier("Эрик Картман") };
+
+            foreach (var soldier in soldiers)
+            {
+                soldier.ShowInfo();
+            }
+
+            Console.WriteLine("Список солдат.");
+            var listSoldiers = soldiers.Select(soldier => new 
+            {
+                Name = soldier.Name,
+                Rank = soldier.Rank
+            });
+
+            Console.WriteLine("\nОтчет:");
+            foreach (var soldier in listSoldiers)
+            {
+                Console.WriteLine($"Имя: {soldier.Name}\n" +
+                    $"Звание: {soldier.Rank}\n" +
+                    $"---------------------------");
+            }
+        }
+    }
+
+    class Soldier
+    {
+        private static Random _random = new Random();
+
+        public string Name { get; private set; }
+        public Weapon Weapon { get; private set; }
+        public Rank Rank { get; private set; }
+        public int LifeTime { get; private set; }
+
+        public Soldier(string name)
+        {
+            Name = name;
+            Weapon = (Weapon)_random.Next(1, 5);
+            Rank = (Rank)_random.Next(1, 6);
+            LifeTime = _random.Next(1, 25);
+        }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine($"Имя: {Name}\n" +
+                $"Вооружение: {Weapon}\n" +
+                $"Звание: {Rank}\n" +
+                $"Срок службы: {LifeTime} месяцув\n" +
+                $"-------------------------------------");
+        }
+    }
+
+    enum Rank
+    {
+        corporal = 1,
+        Lance_Sergeant = 2,
+        sergeant = 3,
+        staff_Sergeant = 4,
+        foreman = 5
+    }
+
+    enum Weapon
+    {
+        pistol = 1,
+        rifle = 2,
+        bayonet = 3,
+        machine = 4
+    }
+}
