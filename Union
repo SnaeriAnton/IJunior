@@ -1,0 +1,88 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Union
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Platoon firstPlatoon = new Platoon("Березов", "Остапенко", "Брукс", "Рихтр", "Брандо");
+            Platoon secondPlatoon = new Platoon("Кравц", "Скорел", "Лицен", "Ханма", "Пактур");
+
+            Console.WriteLine("\nПервый взвод!");
+            firstPlatoon.ShowInfo();
+            Console.WriteLine("\nВторой взвод!");
+            secondPlatoon.ShowInfo();
+            List<Soldier> newSecondPlatoon = secondPlatoon.GetSoldiers();
+            List<Soldier> firstPlatoonList = firstPlatoon.GetSoldiers();
+            newSecondPlatoon = newSecondPlatoon.Union(firstPlatoonList.OrderBy(soldier => soldier.Name).TakeWhile(soldier => soldier.Name.StartsWith("Б"))).ToList();
+
+            Console.WriteLine("\nПеремешение во второ взвод.");
+            foreach (var soldier in newSecondPlatoon)
+            {
+                soldier.ShowInfo();
+            }
+        }
+    }
+
+    class Platoon
+    {
+        private List<Soldier> _soldiers = new List<Soldier>();
+
+        public Platoon(params string[] names)
+        {
+            for (int i = 0; i < names.Length; i++)
+            {
+                _soldiers.Add(new Soldier(names[i]));
+            }
+        }
+
+        public void ShowInfo()
+        {
+            foreach (var soldier in _soldiers)
+            {
+                soldier.ShowInfo();
+            }
+        }
+
+        public List<Soldier> GetSoldiers()
+        {
+            List<Soldier> soldiers = _soldiers;
+            return soldiers;
+        }
+    }
+
+    class Soldier
+    {
+        private static Random _random = new Random();
+
+        public string Name { get; private set; }
+        public Rank Rank { get; private set; }
+
+        public Soldier(string name)
+        {
+            Name = name;
+            Rank = (Rank)_random.Next(1, 6);
+        }
+
+        public void ShowInfo()
+        {
+            Console.WriteLine($"Имя: {Name}\n" +
+                $"Звание: {Rank}\n" +
+                $"-----------------------");
+        }
+    }
+
+    enum Rank
+    {
+        corporal = 1,
+        Lance_Sergeant = 2,
+        sergeant = 3,
+        staff_Sergeant = 4,
+        foreman = 5
+    }
+}
