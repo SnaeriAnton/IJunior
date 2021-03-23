@@ -17,15 +17,13 @@ namespace Union
             firstPlatoon.ShowInfo();
             Console.WriteLine("\nВторой взвод!");
             secondPlatoon.ShowInfo();
-            List<Soldier> newSecondPlatoon = secondPlatoon.GetSoldiers();
-            List<Soldier> firstPlatoonList = firstPlatoon.GetSoldiers();
-            newSecondPlatoon = newSecondPlatoon.Union(firstPlatoonList.OrderBy(soldier => soldier.Name).TakeWhile(soldier => soldier.Name.StartsWith("Б"))).ToList();
 
-            Console.WriteLine("\nПеремешение во второ взвод.");
-            foreach (var soldier in newSecondPlatoon)
-            {
-                soldier.ShowInfo();
-            }
+            secondPlatoon.Union(firstPlatoon.GetSoldiersList());
+            Console.WriteLine("\nПеревод бойцов из первого взвода во второй!" +
+                "\nПервый взвод!");
+            firstPlatoon.ShowInfo();
+            Console.WriteLine("\nВторой взвод!");
+            secondPlatoon.ShowInfo();
         }
     }
 
@@ -49,10 +47,16 @@ namespace Union
             }
         }
 
-        public List<Soldier> GetSoldiers()
+        public List<Soldier> GetSoldiersList()
         {
-            List<Soldier> soldiers = _soldiers;
-            return soldiers;
+            List<Soldier> orderSoldiers = _soldiers.OrderBy(soldier => soldier.Name).TakeWhile(soldier => soldier.Name.StartsWith("Б")).ToList();
+            _soldiers = orderSoldiers;
+            return orderSoldiers;
+        }
+
+        public void Union(List<Soldier> soldiers)
+        {
+            _soldiers = _soldiers.Union(soldiers).ToList();
         }
     }
 
