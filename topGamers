@@ -45,24 +45,23 @@ namespace topGamers
     {
         public void SelectOfThreePlayersByStrength(List<Player> players)
         {
-            var topPlayersByStrength = players.OrderByDescending(player => player.Strength).ToList();
+            var topPlayersByStrength = players.OrderByDescending(player => player.Strength).Take(3).ToList();
             ShowInfo(topPlayersByStrength);
         }
 
         public void SelectOfThreePlayersByLevel(List<Player> players)
         {
-            var topPlayersByStrength = players.OrderByDescending(player => player.Level).ToList();
+            var topPlayersByStrength = players.OrderByDescending(player => player.Level).Take(3).ToList();
             ShowInfo(topPlayersByStrength);
         }
 
         private void ShowInfo(List<Player> players)
         {
-            int topThree = 3;
-            for (int i = 0; i < topThree; i++)
+            foreach (var player in players)
             {
-                players[i].ShowInfo();
+                player.ShowInfo();
             }
-        } 
+        }
     }
 
     class Player
