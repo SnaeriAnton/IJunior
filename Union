@@ -50,7 +50,7 @@ namespace Union
         public List<Soldier> GetSoldiersList()
         {
             List<Soldier> orderSoldiers = _soldiers.OrderBy(soldier => soldier.Name).TakeWhile(soldier => soldier.Name.StartsWith("Б")).ToList();
-            _soldiers = orderSoldiers;
+            _soldiers = _soldiers.Except(orderSoldiers).ToList();
             return orderSoldiers;
         }
 
