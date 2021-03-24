@@ -18,7 +18,7 @@ namespace Union
             Console.WriteLine("\nВторой взвод!");
             secondPlatoon.ShowInfo();
 
-            secondPlatoon.Union(firstPlatoon.GetSoldiersList());
+            secondPlatoon.Unite(firstPlatoon.SelectOfSoldiersByLastName());
             Console.WriteLine("\nПеревод бойцов из первого взвода во второй!" +
                 "\nПервый взвод!");
             firstPlatoon.ShowInfo();
@@ -47,14 +47,14 @@ namespace Union
             }
         }
 
-        public List<Soldier> GetSoldiersList()
+        public List<Soldier> SelectOfSoldiersByLastName()
         {
-            List<Soldier> orderSoldiers = _soldiers.OrderBy(soldier => soldier.Name).TakeWhile(soldier => soldier.Name.StartsWith("Б")).ToList();
+            List<Soldier> orderSoldiers = _soldiers.Where(soldier => soldier.Name.StartsWith("Б")).ToList();
             _soldiers = _soldiers.Except(orderSoldiers).ToList();
             return orderSoldiers;
         }
 
-        public void Union(List<Soldier> soldiers)
+        public void Unite(List<Soldier> soldiers)
         {
             _soldiers = _soldiers.Union(soldiers).ToList();
         }
